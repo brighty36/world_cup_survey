@@ -1,0 +1,40 @@
+# ─────────────────────────────────────────────────────────────
+# Public repo — exclude anything that must not be published.
+# ─────────────────────────────────────────────────────────────
+
+# Raw individual-level survey data — NEVER publish
+*.xlsx
+01 Raw Data/
+
+# Questionnaire (internal)
+02 Questionnaire/
+
+# Internal working charts deck (the LinkedIn Carousel PDF is already public, kept)
+03 Outputs - Charts & Deck/*.pptx
+
+# Trial / TRIAL-licensed Rework fonts — do NOT ship to a public repo.
+# The HTML references the Rework faces but falls back to a web-safe grotesque,
+# so the published page still renders without the licensed files.
+rework-font-family.zip
+*TRIAL*.otf
+*.otf
+fonts/
+
+# Build pipeline, intermediates and working copies (internal)
+05 Web Report/_build/
+05 Web Report/assets/
+
+# Superseded web attempts and the internal brief
+05 Web Report/worldcup_tracker_Ad_opus48.html
+05 Web Report/worldcup_tracker_Ad_opus48_ORIGINAL.html
+05 Web Report/claude_code_prompt_v2.md
+
+# Reference & inspiration (internal)
+06 Reference & Inspo/
+
+# Local tooling config
+.claude/
+
+# OS cruft
+.DS_Store
+Thumbs.db
