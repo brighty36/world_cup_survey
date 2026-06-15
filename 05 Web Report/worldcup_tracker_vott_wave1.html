@@ -39715,8 +39715,9 @@ function renderStatus(){
 }
 
 // ------------ break-by rendering ------------
-// When break-by is active, we re-render the relevant charts as small-multiples
-// — one row per demographic level, only for chart keys present in the slim block.
+// When break-by is active, we re-render each chart grouped BY ANSWER: under every
+// answer option, one bar per demographic group, so the groups sit side by side and
+// are directly comparable on a shared scale. Only for keys present in the slim block.
 const BREAKBY_KEYS = new Set(['Q1','Q3','Q4','Q5','Q6','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q14']);
 // 49-nation questions: cap each demographic cell to its top-N nations for readability.
 const BREAKBY_TOPN = {Q11:8, Q12:8, Q13:8};
@@ -39728,7 +39729,6 @@ function renderBreakBy(card){
     return;
   }
   const aud = effectiveAudience(card);
-  // pick which side's break-by to show
   const sources = aud==='compare' ? ['trades','public']
     : aud==='trade'   ? ['trades']
     : aud==='public'  ? ['public']
@@ -39737,63 +39737,58 @@ function renderBreakBy(card){
   if(!root) return;
   root.innerHTML='';
   renderLegend(card, aud);
-  // Build a stacked block for each demographic level
   const dim = state.breakBy;
   const dimLabels = {S1:'Age', S2:'Gender', S5:'Region', S6:'Sport-following'};
+  const dimLower = dimLabels[dim].toLowerCase();
+
+  // Header
   const wrap = document.createElement('div');
-  wrap.innerHTML = `<div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream);margin-bottom:10px;font-weight:600">Broken by ${dimLabels[dim]}</div>`;
+  wrap.innerHTML = `<div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream);margin-bottom:4px;font-weight:600">Broken by ${dimLabels[dim]}</div>
+    <div style="font-size:11.5px;opacity:.72;margin-bottom:4px">Each answer compares the ${dimLower} groups side by side, on a shared 0–100% scale.</div>`;
   root.appendChild(wrap);
 
-  // Use all-panel break-by levels as the union of labels
   const allLevels = Object.keys(audienceBreaks('all', dim));
 
-  // For each level, render one row per option as paired (if compare) or single bar
-  allLevels.forEach(levelLabel=>{
-    const baseBy = {};
-    sources.forEach(src => {
-      const blk = audienceBreaks(src, dim)[levelLabel];
-      baseBy[src] = blk ? { n: blk.n, series: blk[key] } : null;
-    });
-    const levelBlock = document.createElement('div');
-    levelBlock.style.cssText = 'margin-top:18px;padding-top:14px;border-top:1px dashed var(--card-edge)';
-    const baseStrs = sources.map(s=>{
-      const nm = s==='trades'?'Trade':s==='public'?'Public':'All';
-      const b = baseBy[s]; const ind = b && b.n<SAMPLE_THRESHOLD ? ' (indicative)' : '';
-      return b ? `${nm} n=${b.n}${ind}` : `${nm} n=0`;
-    }).join(' · ');
-    levelBlock.innerHTML = `<div style="font-size:13px;font-weight:700;margin-bottom:8px">${levelLabel} <span style="font-weight:400;opacity:.7;font-size:11px;letter-spacing:.06em;margin-left:8px">${baseStrs}</span></div>`;
+  // Option order: top-N for the 49-nation questions; honour the sort toggle.
+  let orderRef = audienceBlock('all')[key] || [];
+  if(BREAKBY_TOPN[key]) orderRef = orderRef.slice().sort((a,b)=>b.pct-a.pct).slice(0, BREAKBY_TOPN[key]);
+  if(state.sort[key]==='value') orderRef = orderRef.slice().sort((a,b)=>b.pct-a.pct);
 
-    // Pick option order from 'all', or fall back to the first valid block.
-    let orderRef = audienceBlock('all')[key] || (baseBy[sources[0]] && baseBy[sources[0]].series) || [];
-    // For 49-nation questions, show a consistent top-N set across every group.
-    if(BREAKBY_TOPN[key]){
-      orderRef = orderRef.slice().sort((a,b)=>b.pct-a.pct).slice(0, BREAKBY_TOPN[key]);
-    }
-    if(sources.length===2 && baseBy.trades && baseBy.public){
-      const allLvl = audienceBreaks('all', dim)[levelLabel];
-      const allSeries = allLvl ? allLvl[key] : null;
-      orderRef.forEach(o=>{
-        const ti = baseBy.trades.series.find(x=>x.label===o.label) || {pct:0,n:0};
-        const pi = baseBy.public.series.find(x=>x.label===o.label) || {pct:0,n:0};
-        const optAll = allLvl && allSeries
-          ? {all:{val:(allSeries.find(x=>x.label===o.label)||{pct:0}).pct, base:allLvl.n}}
-          : {};
-        levelBlock.appendChild(pairBar(o.label, ti.pct, pi.pct, baseBy.trades.n, baseBy.public.n, optAll));
-      });
-    }else{
-      sources.forEach(src=>{
-        const cls = src==='trades'?'t':src==='public'?'p':'a';
-        const b = baseBy[src]; if(!b) return;
-        orderRef.forEach(o=>{
-          const it = b.series.find(x=>x.label===o.label) || {pct:0,n:0};
-          levelBlock.appendChild(singleBar(o.label, it.pct, b.n, cls));
-        });
-      });
-    }
-    root.appendChild(levelBlock);
+  // Pre-index each source's per-level block.
+  const blocks = {};
+  sources.forEach(src=>{
+    blocks[src] = {};
+    allLevels.forEach(lvl=>{
+      const blk = audienceBreaks(src, dim)[lvl];
+      blocks[src][lvl] = blk ? {n: blk.n, series: blk[key]} : null;
+    });
+  });
+  const allByLevel = {};
+  allLevels.forEach(lvl=>{ allByLevel[lvl] = audienceBreaks('all', dim)[lvl] || null; });
+
+  const valFor = (blk, label)=> (blk && (blk.series||blk[key]||[]).find(x=>x.label===label) || {pct:0}).pct;
+
+  // Outer loop = answer option; inner loop = demographic group (so groups are adjacent).
+  orderRef.forEach(o=>{
+    const optBlock = document.createElement('div');
+    optBlock.style.cssText = 'margin-top:16px;padding-top:12px;border-top:1px dashed var(--card-edge)';
+    optBlock.innerHTML = `<div style="font-size:13px;font-weight:700;margin-bottom:8px">${o.label}</div>`;
+    allLevels.forEach(lvl=>{
+      if(aud==='compare'){
+        const tb = blocks.trades[lvl], pb = blocks.public[lvl], ab = allByLevel[lvl];
+        const optAll = ab ? {all:{val:valFor(ab, o.label), base:ab.n}} : {};
+        optBlock.appendChild(pairBar(lvl, valFor(tb, o.label), valFor(pb, o.label),
+          tb?tb.n:0, pb?pb.n:0, optAll));
+      }else{
+        const src = sources[0], cls = src==='trades'?'t':src==='public'?'p':'a';
+        const b = blocks[src][lvl]; if(!b) return;
+        optBlock.appendChild(singleBar(lvl, valFor(b, o.label), b.n, cls));
+      }
+    });
+    root.appendChild(optBlock);
   });
 
-  renderFoot(card, 'Broken by '+dimLabels[dim]+'. Bases shown per level; cells under '+SAMPLE_THRESHOLD+' flagged as indicative.');
+  renderFoot(card, 'Broken by '+dimLabels[dim]+' — groups side by side per answer. Cells under '+SAMPLE_THRESHOLD+' flagged as indicative.');
   fillBars(root);
 }
 
