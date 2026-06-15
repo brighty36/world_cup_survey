@@ -195,7 +195,7 @@ h2.section-h{font-size:clamp(28px,3.8vw,46px);max-width:22ch;margin-bottom:14px}
 .bar-fill{height:100%;width:0;border-radius:7px;transition:width .9s cubic-bezier(.18,.85,.34,1)}
 .bar-fill.t{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta))}
 .bar-fill.p{background:linear-gradient(90deg,var(--cream-edge),var(--cream))}
-.bar-fill.a{background:linear-gradient(90deg,#a8b3a6,#e2cba1)}
+.bar-fill.a{background:linear-gradient(90deg,#7f8d85,#a8b3a6)}
 
 /* compare paired bars */
 .pair{margin-bottom:18px}
@@ -208,6 +208,8 @@ h2.section-h{font-size:clamp(28px,3.8vw,46px);max-width:22ch;margin-bottom:14px}
 .pair-row .bar-track{flex:1}
 .pair-row.t .bar-fill{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta))}
 .pair-row.p .bar-fill{background:linear-gradient(90deg,var(--cream-edge),var(--cream))}
+.pair-row .pname.a{color:#c2ccc2}
+.pair-row.a .bar-fill{background:linear-gradient(90deg,#7f8d85,#a8b3a6)}
 
 /* ---------- legend ---------- */
 .legend{display:inline-flex;gap:16px;align-items:center;font-size:12px;color:var(--chalk-soft);margin-bottom:14px;flex-wrap:wrap}
@@ -215,7 +217,7 @@ h2.section-h{font-size:clamp(28px,3.8vw,46px);max-width:22ch;margin-bottom:14px}
 .legend .swatch{width:14px;height:14px;border-radius:4px}
 .legend .swatch.t{background:var(--magenta)}
 .legend .swatch.p{background:var(--cream)}
-.legend .swatch.a{background:var(--chalk)}
+.legend .swatch.a{background:#a8b3a6}
 
 /* ---------- big-stat cards (Q3 / Q2 net) ---------- */
 .bigstat{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:end}
@@ -223,7 +225,7 @@ h2.section-h{font-size:clamp(28px,3.8vw,46px);max-width:22ch;margin-bottom:14px}
 .bigstat .stat .v{font-family:"Rework Headline",system-ui;font-weight:700;font-size:clamp(48px,8vw,80px);line-height:1;letter-spacing:-.02em;}
 .bigstat .stat .v.t{color:var(--magenta)}
 .bigstat .stat .v.p{color:var(--cream)}
-.bigstat .stat .v.a{color:var(--chalk)}
+.bigstat .stat .v.a{color:#bcc7bd}
 .bigstat .stat .vlab{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cream);opacity:.85;margin-top:8px;font-weight:600}
 
 /* ---------- diverging net excitement ---------- */
@@ -233,6 +235,7 @@ h2.section-h{font-size:clamp(28px,3.8vw,46px);max-width:22ch;margin-bottom:14px}
 .div-bar.neg{border-radius:0 0 8px 8px;align-self:flex-start}
 .div-bar.t{background:linear-gradient(180deg,var(--magenta-deep),var(--magenta))}
 .div-bar.p{background:linear-gradient(180deg,var(--cream-edge),var(--cream))}
+.div-bar.a{background:linear-gradient(180deg,#7f8d85,#a8b3a6)}
 .div-zero{position:absolute;top:50%;left:0;right:0;height:1px;border-top:1px dashed var(--card-edge);}
 .div-val{font-family:"Rework Headline";font-weight:700;font-size:22px;margin-top:8px}
 .div-val.neg{margin-top:0;margin-bottom:8px}
@@ -20474,11 +20477,12 @@ function attachTip(el, html){
 
 function pairBar(label, tradeVal, publicVal, tradeBase, publicBase, opts){
   opts = opts || {};
-  const small = (tradeBase>0 && tradeBase<SAMPLE_THRESHOLD) || (publicBase>0 && publicBase<SAMPLE_THRESHOLD);
+  const all = opts.all; // optional {val, base}
+  const small = (tradeBase>0 && tradeBase<SAMPLE_THRESHOLD) || (publicBase>0 && publicBase<SAMPLE_THRESHOLD)
+    || (all && all.base>0 && all.base<SAMPLE_THRESHOLD);
   const ind = small ? `<span class="indicative" title="Sub-base under ${SAMPLE_THRESHOLD}">Indicative</span>` : '';
   const div = document.createElement('div'); div.className='pair';
-  div.innerHTML = `
-    <div class="pair-lab">${label}${ind}</div>
+  let rows = `
     <div class="pair-row t">
       <span class="pname t">Trade</span>
       <div class="bar-track"><div class="bar-fill" data-w="${tradeVal}"></div></div>
@@ -20489,7 +20493,18 @@ function pairBar(label, tradeVal, publicVal, tradeBase, publicBase, opts){
       <div class="bar-track"><div class="bar-fill" data-w="${publicVal}"></div></div>
       <span class="pct">${publicVal}%</span>
     </div>`;
-  attachTip(div, `<b>${label}</b><br>Trade: <b>${tradeVal}%</b> (n=${tradeBase})<br>Public: <b>${publicVal}%</b> (n=${publicBase})`);
+  if(all){
+    rows += `
+    <div class="pair-row a">
+      <span class="pname a">All</span>
+      <div class="bar-track"><div class="bar-fill" data-w="${all.val}"></div></div>
+      <span class="pct">${all.val}%</span>
+    </div>`;
+  }
+  div.innerHTML = `<div class="pair-lab">${label}${ind}</div>` + rows;
+  let tipHtml = `<b>${label}</b><br>Trade: <b>${tradeVal}%</b> (n=${tradeBase})<br>Public: <b>${publicVal}%</b> (n=${publicBase})`;
+  if(all) tipHtml += `<br>All: <b>${all.val}%</b> (n=${all.base})`;
+  attachTip(div, tipHtml);
   return div;
 }
 
@@ -20518,7 +20533,7 @@ function renderLegend(card, audience){
   const leg = card.querySelector('[data-legend]'); if(!leg) return;
   leg.innerHTML = '';
   const want = audience==='compare'
-    ? [['t','Trade · n='+DATA.meta.n_trades], ['p','Public · n='+DATA.meta.n_public]]
+    ? [['t','Trade · n='+DATA.meta.n_trades], ['p','Public · n='+DATA.meta.n_public], ['a','All · n='+DATA.meta.n_all]]
     : audience==='trade' ? [['t','Trade · n='+DATA.meta.n_trades]]
     : audience==='public'? [['p','Public · n='+DATA.meta.n_public]]
     : [['a','All respondents · n='+DATA.meta.n_all]];
@@ -20545,12 +20560,12 @@ function renderLikelyStat(card){
   const root = card.querySelector('#chart-likely');
   const aud = effectiveAudience(card);
   root.innerHTML = '';
-  const blocks = aud==='compare' ? ['trades','public']
+  const blocks = aud==='compare' ? ['trades','public','all']
     : aud==='trade'  ? ['trades']
     : aud==='public' ? ['public']
     : ['all'];
   if(aud!=='compare') root.style.gridTemplateColumns = '1fr';
-  else root.style.gridTemplateColumns = '1fr 1fr';
+  else root.style.gridTemplateColumns = 'repeat(3,1fr)';
   blocks.forEach(aKey=>{
     const k = audienceBlock(aKey).Q3_likely_to_watch;
     const cls = aKey==='trades'?'t':aKey==='public'?'p':'a';
@@ -20560,14 +20575,14 @@ function renderLikelyStat(card){
     attachTip(el, `<b>${lab} — Likely to watch</b><br>${k.pct.toFixed(1)}% (n=${k.n}/${k.base})<br>top-2-box (Very/Fairly likely)`);
     root.appendChild(el);
   });
-  renderFoot(card, 'Base: ' + (aud==='compare'?'public n=244, trades n=116':aud==='trade'?'trades n=116':aud==='public'?'public n=244':'all n=360') + '. % Very likely + Fairly likely.');
+  renderFoot(card, 'Base: ' + (aud==='compare'?'trades n=116, public n=244, all n=360':aud==='trade'?'trades n=116':aud==='public'?'public n=244':'all n=360') + '. % Very likely + Fairly likely.');
 }
 
 function renderNetExciteCard(card){
   const root = card.querySelector('#chart-netexcite');
   const aud = effectiveAudience(card);
   root.innerHTML = '<div class="div-zero"></div>';
-  const list = aud==='compare' ? ['trades','public']
+  const list = aud==='compare' ? ['trades','public','all']
     : aud==='trade'  ? ['trades']
     : aud==='public' ? ['public']
     : ['all'];
@@ -20611,18 +20626,21 @@ function renderSingleSelect(card, key){
   if(aud==='compare'){
     const t = audienceBlock('trades')[key];
     const p = audienceBlock('public')[key];
+    const a = audienceBlock('all')[key];
     const baseT = t.reduce((s,x)=>s+x.n,0);
     const baseP = p.reduce((s,x)=>s+x.n,0);
+    const baseA = a.reduce((s,x)=>s+x.n,0);
     let entries = order.map(o=>{
       const ti = t.find(x=>x.label===o.label) || {pct:0,n:0};
       const pi = p.find(x=>x.label===o.label) || {pct:0,n:0};
-      return [o.label, ti.pct, pi.pct, ti.n, pi.n];
+      const ai = a.find(x=>x.label===o.label) || {pct:0,n:0};
+      return [o.label, ti.pct, pi.pct, ti.n, pi.n, ai.pct];
     });
     if(state.sort[key]==='value') entries.sort((a,b)=>Math.max(b[1],b[2])-Math.max(a[1],a[2]));
-    entries.forEach(([lab,tv,pv,tn,pn])=>{
-      root.appendChild(pairBar(lab,tv,pv,baseT,baseP));
+    entries.forEach(([lab,tv,pv,tn,pn,av])=>{
+      root.appendChild(pairBar(lab,tv,pv,baseT,baseP,{all:{val:av,base:baseA}}));
     });
-    renderFoot(card,'Base — Trades n='+baseT+', Public n='+baseP+'. % share of respondents.');
+    renderFoot(card,'Base — Trades n='+baseT+', Public n='+baseP+', All n='+baseA+'. % share of respondents.');
   }else{
     const aKey = blocks[0][0], cls = blocks[0][1];
     const series = audienceBlock(aKey)[key];
@@ -20652,19 +20670,22 @@ function renderMulti(card, key, opts){
   if(aud==='compare'){
     const t = audienceBlock('trades')[key];
     const p = audienceBlock('public')[key];
+    const a = audienceBlock('all')[key];
     const baseT = audienceBlock('trades').n;
     const baseP = audienceBlock('public').n;
+    const baseA = audienceBlock('all').n;
     let entries = order.map(o=>{
       const ti = t.find(x=>x.label===o.label) || {pct:0,n:0};
       const pi = p.find(x=>x.label===o.label) || {pct:0,n:0};
-      return [o.label, ti.pct, pi.pct, ti.n, pi.n];
+      const ai = a.find(x=>x.label===o.label) || {pct:0,n:0};
+      return [o.label, ti.pct, pi.pct, ti.n, pi.n, ai.pct];
     });
     if(opts.topN) entries = entries.sort((a,b)=>Math.max(b[1],b[2])-Math.max(a[1],a[2])).slice(0,opts.topN);
     if(state.sort[key]==='value') entries.sort((a,b)=>Math.max(b[1],b[2])-Math.max(a[1],a[2]));
-    entries.forEach(([lab,tv,pv,tn,pn])=>{
-      root.appendChild(pairBar(lab,tv,pv,baseT,baseP));
+    entries.forEach(([lab,tv,pv,tn,pn,av])=>{
+      root.appendChild(pairBar(lab,tv,pv,baseT,baseP,{all:{val:av,base:baseA}}));
     });
-    renderFoot(card,'Base — Trades n='+baseT+', Public n='+baseP+'. Multi-select; columns sum to >100%.');
+    renderFoot(card,'Base — Trades n='+baseT+', Public n='+baseP+', All n='+baseA+'. Multi-select; columns sum to >100%.');
   }else{
     const aKey = aud==='trade'?'trades':aud==='public'?'public':'all';
     const cls = aud==='trade'?'t':aud==='public'?'p':'a';
@@ -20721,19 +20742,22 @@ function renderCard(card){
     if(aud==='compare'){
       const t = audienceBlock('trades')[key];
       const p = audienceBlock('public')[key];
+      const a = audienceBlock('all')[key];
       const baseT = t.reduce((s,x)=>s+x.n,0);
       const baseP = p.reduce((s,x)=>s+x.n,0);
+      const baseA = a.reduce((s,x)=>s+x.n,0);
       const labels = new Set([...t.map(x=>x.label), ...p.map(x=>x.label)]);
       let entries = Array.from(labels).map(lab=>{
         const ti=t.find(x=>x.label===lab)||{pct:0,n:0};
         const pi=p.find(x=>x.label===lab)||{pct:0,n:0};
-        return [lab, ti.pct, pi.pct, ti.n, pi.n];
+        const ai=a.find(x=>x.label===lab)||{pct:0,n:0};
+        return [lab, ti.pct, pi.pct, ti.n, pi.n, ai.pct];
       });
       entries.sort((a,b)=>Math.max(b[1],b[2])-Math.max(a[1],a[2]));
-      entries.slice(0,topN).forEach(([lab,tv,pv,tn,pn])=>{
-        root.appendChild(pairBar(lab,tv,pv,baseT,baseP));
+      entries.slice(0,topN).forEach(([lab,tv,pv,tn,pn,av])=>{
+        root.appendChild(pairBar(lab,tv,pv,baseT,baseP,{all:{val:av,base:baseA}}));
       });
-      renderFoot(card,'Base — Trades n='+baseT+', Public n='+baseP+'. Showing top '+topN+' of '+entries.length+' nominated nations.');
+      renderFoot(card,'Base — Trades n='+baseT+', Public n='+baseP+', All n='+baseA+'. Showing top '+topN+' of '+entries.length+' nominated nations.');
     }else{
       const aKey = aud==='trade'?'trades':aud==='public'?'public':'all';
       const cls = aud==='trade'?'t':aud==='public'?'p':'a';
@@ -20804,9 +20828,9 @@ function renderStatus(){
   const s = $('#cb-status');
   const dimLabels = {S1:'Age', S2:'Gender', S5:'Region', S6:'Sport-following'};
   const aud = state.audience;
-  const audName = aud==='compare'?'Trade vs Public':aud==='trade'?'Trade only':aud==='public'?'Public only':'All respondents';
+  const audName = aud==='compare'?'Trade · Public · All':aud==='trade'?'Trade only':aud==='public'?'Public only':'All respondents';
   const audChip = '<span class="audchip">' + (aud==='compare'
-    ? '<span class="ball t" style="width:8px;height:8px;border-radius:50%;background:var(--magenta);display:inline-block"></span><span class="ball p" style="width:8px;height:8px;border-radius:50%;background:var(--cream);display:inline-block"></span>'
+    ? '<span class="ball t" style="width:8px;height:8px;border-radius:50%;background:var(--magenta);display:inline-block"></span><span class="ball p" style="width:8px;height:8px;border-radius:50%;background:var(--cream);display:inline-block"></span><span class="ball a" style="width:8px;height:8px;border-radius:50%;background:#a8b3a6;display:inline-block"></span>'
     : aud==='trade'?'<span style="width:8px;height:8px;border-radius:50%;background:var(--magenta);display:inline-block"></span>'
     : aud==='public'?'<span style="width:8px;height:8px;border-radius:50%;background:var(--cream);display:inline-block"></span>'
     : '<span style="width:8px;height:8px;border-radius:50%;background:var(--chalk);display:inline-block"></span>') + ' Showing <b>'+audName+'</b></span>';
@@ -20864,10 +20888,15 @@ function renderBreakBy(card){
     // Pick option order from 'all' first level we can find, or fallback to the first valid block
     const orderRef = audienceBlock('all')[key] || (baseBy[sources[0]] && baseBy[sources[0]].series) || [];
     if(sources.length===2 && baseBy.trades && baseBy.public){
+      const allLvl = audienceBreaks('all', dim)[levelLabel];
+      const allSeries = allLvl ? allLvl[key] : null;
       orderRef.forEach(o=>{
         const ti = baseBy.trades.series.find(x=>x.label===o.label) || {pct:0,n:0};
         const pi = baseBy.public.series.find(x=>x.label===o.label) || {pct:0,n:0};
-        levelBlock.appendChild(pairBar(o.label, ti.pct, pi.pct, baseBy.trades.n, baseBy.public.n));
+        const optAll = allLvl && allSeries
+          ? {all:{val:(allSeries.find(x=>x.label===o.label)||{pct:0}).pct, base:allLvl.n}}
+          : {};
+        levelBlock.appendChild(pairBar(o.label, ti.pct, pi.pct, baseBy.trades.n, baseBy.public.n, optAll));
       });
     }else{
       sources.forEach(src=>{
