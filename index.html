@@ -102,7 +102,8 @@ h1.title em{color:var(--magenta);font-style:normal}
   border-bottom:1px solid var(--card-edge);
 }
 .jumpbox .wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.jump-pills{display:flex;gap:5px;flex-wrap:wrap}
+.jump-pills{display:flex;gap:5px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+.jump-pills::-webkit-scrollbar{display:none}
 .jump-pill{
   cursor:pointer;padding:4px 10px;border-radius:999px;
   background:rgba(255,255,255,.07);border:1px solid var(--card-edge);
@@ -334,21 +335,21 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
 <div class="jumpbox" id="jumpbox"><div class="wrap">
   <span class="cb-label">Jump to</span>
   <div class="jump-pills" id="jump-pills">
-    <a class="jump-pill" data-target="Q1">Q1</a>
-    <a class="jump-pill" data-target="netexcite">Q2</a>
-    <a class="jump-pill" data-target="Q3">Q3</a>
-    <a class="jump-pill" data-target="Q4">Q4</a>
-    <a class="jump-pill" data-target="Q5">Q5</a>
-    <a class="jump-pill" data-target="Q6">Q6</a>
-    <a class="jump-pill" data-target="Q7">Q7</a>
-    <a class="jump-pill" data-target="Q8">Q8</a>
-    <a class="jump-pill" data-target="Q9">Q9</a>
-    <a class="jump-pill" data-target="Q10">Q10</a>
-    <a class="jump-pill" data-target="Q10a">Q10a</a>
-    <a class="jump-pill" data-target="Q11">Q11</a>
-    <a class="jump-pill" data-target="Q12">Q12</a>
-    <a class="jump-pill" data-target="Q13">Q13</a>
-    <a class="jump-pill" data-target="Q14">Q14</a>
+    <a class="jump-pill" data-target="Q1" title="&quot;I am excited about the 2026 FIFA World Cup&quot;">Q1</a>
+    <a class="jump-pill" data-target="netexcite" title="Net excitement vs previous tournaments">Q2</a>
+    <a class="jump-pill" data-target="Q3" title="How likely are you to watch any of the 2026 FIFA World Cup?">Q3</a>
+    <a class="jump-pill" data-target="Q4" title="Which matches do you expect to watch?">Q4</a>
+    <a class="jump-pill" data-target="Q5" title="Where do you expect to watch the majority of matches?">Q5</a>
+    <a class="jump-pill" data-target="Q6" title="How have you come across brands associated with the tournament?">Q6</a>
+    <a class="jump-pill" data-target="Q7" title="Which of these have you done because of a brand's involvement in sport?">Q7</a>
+    <a class="jump-pill" data-target="Q8" title="Which would make you more likely to buy from a World Cup sponsor?">Q8</a>
+    <a class="jump-pill" data-target="Q9" title="Which have you done or would consider doing around the tournament?">Q9</a>
+    <a class="jump-pill" data-target="Q10" title="Which would make you notice or engage with a sponsor? (Trade only)">Q10</a>
+    <a class="jump-pill" data-target="Q10a" title="Which would have the most influence? (Trade only)">Q10a</a>
+    <a class="jump-pill" data-target="Q11" title="Who do you think will win the 2026 FIFA World Cup?">Q11</a>
+    <a class="jump-pill" data-target="Q12" title="Which nations will reach the semi-finals?">Q12</a>
+    <a class="jump-pill" data-target="Q13" title="Which nation will you be supporting?">Q13</a>
+    <a class="jump-pill" data-target="Q14" title="How far do you think your team will get?">Q14</a>
   </div>
   <button class="cb-reset" id="cb-reset" style="margin-left:auto">Reset all</button>
 </div></div>
@@ -39720,6 +39721,8 @@ $$('.jump-pill').forEach(pill=>{
     const card = document.querySelector('[data-chart="'+target+'"]');
     if(card) card.scrollIntoView({behavior:'smooth', block:'start'});
   });
+  // Attach custom styled tooltip using existing tip mechanism
+  if(pill.title) attachTip(pill, pill.title);
 });
 
 // per-card sort buttons
