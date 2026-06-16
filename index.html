@@ -122,6 +122,7 @@ h1.title em{color:var(--magenta);font-style:normal}
   display:inline-flex;align-items:center;gap:6px;
 }
 .seg button:hover{background:rgba(255,255,255,.06)}
+.seg button:disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
 .seg button.on{background:var(--magenta);color:#fff;box-shadow:0 0 14px rgba(214,0,108,.45)}
 .seg button.on.public{background:var(--cream);color:#0e3320;box-shadow:0 0 14px rgba(247,230,200,.35)}
 .seg button.on.all{background:var(--chalk);color:#0e3320}
@@ -39300,13 +39301,11 @@ function buildCardAud(card){
     <button data-aud="all"><span class="ball a"></span>All</button>
   `;
   seg.addEventListener('click', e=>{
-    const b = e.target.closest('button'); if(!b) return;
+    const b = e.target.closest('button'); if(!b || b.disabled) return;
     seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
     b.classList.add('on');
     state.cardAud[key] = b.dataset.aud;
-    const brk = effectiveBreak(card);
-    if(brk && BREAKBY_KEYS.has(key)) renderBreakBy(card);
-    else renderCard(card);
+    renderCard(card);
   });
   frag.appendChild(seg);
 
@@ -39324,7 +39323,9 @@ function buildCardAud(card){
   if(!BREAKBY_KEYS.has(key)){ brkSel.disabled = true; }
   brkSel.addEventListener('change', ()=>{
     state.cardBreak[key] = brkSel.value;
-    if(brkSel.value && BREAKBY_KEYS.has(key)) renderBreakBy(card);
+    const active = !!brkSel.value && BREAKBY_KEYS.has(key);
+    seg.querySelectorAll('button').forEach(b=> b.disabled = active);
+    if(active) renderBreakBy(card);
     else renderCard(card);
   });
   frag.appendChild(brkSel);
@@ -39704,7 +39705,7 @@ if(_resetBtn) _resetBtn.addEventListener('click', ()=>{
   state.cardBreak = {};
   // Reset per-card audience buttons to Compare
   $$('.card-seg').forEach(seg=>{
-    seg.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+    seg.querySelectorAll('button').forEach(b=>{ b.classList.remove('on'); b.disabled = false; });
     const cmp = seg.querySelector('button[data-aud="compare"]');
     if(cmp) cmp.classList.add('on');
   });
@@ -39767,42 +39768,46 @@ function renderBreakBy(card){
     renderCard(card);
     return;
   }
-  const aud = effectiveAudience(card);
-  const sources = aud==='compare' ? ['trades','public']
-    : aud==='trade'   ? ['trades']
-    : aud==='public'  ? ['public']
-    :                   ['all'];
   const root = card.querySelector('#chart-'+key);
   if(!root) return;
   root.innerHTML='';
-  renderLegend(card, aud);
+
   const dimLabels = {S1:'Age', S2:'Gender', S5:'Region', S6:'Sport-following'};
   const dimLower = dimLabels[dim].toLowerCase();
+  // Sport-following is only collected on the Trade panel; the other
+  // demographic breaks are only collected on the Public panel, so each
+  // break-by dimension has a single, fixed source panel.
+  const source = dim==='S6' ? 'trades' : 'public';
+  const sourceLabel = source==='trades' ? 'Trade' : 'Public';
+  const sourceN = source==='trades' ? DATA.meta.n_trades : DATA.meta.n_public;
+
+  const leg = card.querySelector('[data-legend]');
+  if(leg){
+    leg.innerHTML = '';
+    const ch = document.createElement('span'); ch.className='chip';
+    ch.innerHTML = `<span class="swatch a"></span>${sourceLabel} panel · n=${sourceN}`;
+    leg.appendChild(ch);
+  }
 
   // Header
   const wrap = document.createElement('div');
-  wrap.innerHTML = `<div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream);margin-bottom:4px;font-weight:600">Broken by ${dimLabels[dim]}</div>
-    <div style="font-size:11.5px;opacity:.72;margin-bottom:4px">Each answer compares the ${dimLower} groups side by side, on a shared 0–100% scale.</div>`;
+  wrap.innerHTML = `<div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream);margin-bottom:4px;font-weight:600">Broken by ${dimLabels[dim]} (${sourceLabel} panel)</div>
+    <div style="font-size:11.5px;opacity:.72;margin-bottom:4px">Each answer compares the ${dimLower} groups side by side within the ${sourceLabel.toLowerCase()} panel, on a shared 0–100% scale.</div>`;
   root.appendChild(wrap);
 
-  const allLevels = Object.keys(audienceBreaks('all', dim));
+  const breaks = audienceBreaks(source, dim);
+  const allLevels = Object.keys(breaks);
 
   // Option order: top-N for the 49-nation questions; honour the sort toggle.
   let orderRef = audienceBlock('all')[key] || [];
   if(BREAKBY_TOPN[key]) orderRef = orderRef.slice().sort((a,b)=>b.pct-a.pct).slice(0, BREAKBY_TOPN[key]);
   if(state.sort[key]==='value') orderRef = orderRef.slice().sort((a,b)=>b.pct-a.pct);
 
-  // Pre-index each source's per-level block.
   const blocks = {};
-  sources.forEach(src=>{
-    blocks[src] = {};
-    allLevels.forEach(lvl=>{
-      const blk = audienceBreaks(src, dim)[lvl];
-      blocks[src][lvl] = blk ? {n: blk.n, series: blk[key]} : null;
-    });
+  allLevels.forEach(lvl=>{
+    const blk = breaks[lvl];
+    blocks[lvl] = blk ? {n: blk.n, series: blk[key]} : null;
   });
-  const allByLevel = {};
-  allLevels.forEach(lvl=>{ allByLevel[lvl] = audienceBreaks('all', dim)[lvl] || null; });
 
   const valFor = (blk, label)=> (blk && (blk.series||blk[key]||[]).find(x=>x.label===label) || {pct:0}).pct;
 
@@ -39812,21 +39817,13 @@ function renderBreakBy(card){
     optBlock.style.cssText = 'margin-top:16px;padding-top:12px;border-top:1px dashed var(--card-edge)';
     optBlock.innerHTML = `<div style="font-size:13px;font-weight:700;margin-bottom:8px">${o.label}</div>`;
     allLevels.forEach(lvl=>{
-      if(aud==='compare'){
-        const tb = blocks.trades[lvl], pb = blocks.public[lvl], ab = allByLevel[lvl];
-        const optAll = ab ? {all:{val:valFor(ab, o.label), base:ab.n}} : {};
-        optBlock.appendChild(pairBar(lvl, valFor(tb, o.label), valFor(pb, o.label),
-          tb?tb.n:0, pb?pb.n:0, optAll));
-      }else{
-        const src = sources[0], cls = src==='trades'?'t':src==='public'?'p':'a';
-        const b = blocks[src][lvl]; if(!b) return;
-        optBlock.appendChild(singleBar(lvl, valFor(b, o.label), b.n, cls));
-      }
+      const b = blocks[lvl]; if(!b) return;
+      optBlock.appendChild(singleBar(lvl, valFor(b, o.label), b.n, 'a'));
     });
     root.appendChild(optBlock);
   });
 
-  renderFoot(card, 'Broken by '+dimLabels[dim]+', groups side by side per answer. Cells under '+SAMPLE_THRESHOLD+' flagged as indicative.');
+  renderFoot(card, 'Broken by '+dimLabels[dim]+' ('+sourceLabel+' panel), groups side by side per answer. Cells under '+SAMPLE_THRESHOLD+' flagged as indicative.');
   fillBars(root);
 }
 
