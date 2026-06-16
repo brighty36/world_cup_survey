@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026 World Cup Brand Tracker: Wave 1 · Voice of the Trade</title>
@@ -95,12 +96,20 @@ h1.title em{color:var(--magenta);font-style:normal}
 .hint button:hover{opacity:1}
 
 /* ---------- sticky global control bar ---------- */
-.controlbar{
-  position:sticky;top:0;z-index:30;padding:12px 0;
-  background:rgba(14,51,32,.86);backdrop-filter:blur(10px);
+.jumpbox{
+  position:sticky;top:0;z-index:30;padding:10px 0;
+  background:rgba(14,51,32,.9);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--card-edge);
 }
-.controlbar .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.jumpbox .wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.jump-pills{display:flex;gap:5px;flex-wrap:wrap}
+.jump-pill{
+  cursor:pointer;padding:4px 10px;border-radius:999px;
+  background:rgba(255,255,255,.07);border:1px solid var(--card-edge);
+  font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--chalk);
+  text-decoration:none;transition:all .15s;white-space:nowrap;
+}
+.jump-pill:hover,.jump-pill:focus{background:var(--magenta);border-color:var(--magenta);outline:none}
 .cb-label{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--cream);font-weight:600;margin-right:2px}
 .seg{
   display:inline-flex;background:rgba(0,0,0,.28);border:1px solid var(--card-edge);
@@ -142,7 +151,7 @@ h1.title em{color:var(--magenta);font-style:normal}
 .cb-status .audchip{display:inline-flex;align-items:center;gap:6px}
 
 /* ---------- sections ---------- */
-section.block{padding:88px 0;border-top:1px solid var(--card-edge);position:relative}
+section.block{padding:44px 0;border-top:1px solid var(--card-edge);position:relative}
 section.block:first-of-type{border-top:0}
 .kicker{
   font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--cream);
@@ -172,10 +181,10 @@ h2.section-h{font-size:clamp(28px,3.8vw,46px);max-width:22ch;margin-bottom:14px}
 }
 .card.reveal{opacity:0;transform:translateY(14px)}
 .card.reveal.in{opacity:1;transform:translateY(0)}
-.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;position:sticky;top:64px;z-index:20;background:#0c2c1a;border-radius:18px 18px 0 0;margin:-24px -24px 18px;padding:20px 24px 14px;border-bottom:1px solid var(--card-edge)}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;position:sticky;top:46px;z-index:20;background:#0c2c1a;border-radius:18px 18px 0 0;margin:-24px -24px 18px;padding:20px 24px 14px;border-bottom:1px solid var(--card-edge)}
 .card-head h3{font-family:"Rework Text",system-ui;font-weight:700;font-size:16.5px;line-height:1.28;letter-spacing:.005em;max-width:42ch}
 .card-q{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--cream);opacity:.78;display:block;margin-bottom:5px;font-weight:600}
-.card-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.card-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;row-gap:6px}
 .card-act{
   border:1px solid var(--card-edge);background:rgba(0,0,0,.15);color:var(--chalk-soft);
   padding:5px 10px;border-radius:999px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;cursor:pointer;
@@ -319,29 +328,29 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
   <h1 class="title">The World&nbsp;Cup is here, and we've compared how the&nbsp;<em>trades</em> and the <em>public</em> will watch.</h1>
   <p class="subhead">Two UK panels, side by side, on the 2026 FIFA World Cup. <strong>Opinion Pulse</strong> (UK public, n=244) and <strong>Voice of the Trade</strong> (verified UK tradespeople, n=116). This page is the live, interactive cut of what they told us.</p>
   <div class="method-line">Toggle between <span style="color:var(--magenta);font-weight:600">Trades</span> and <span style="color:var(--cream);font-weight:600">Public</span> on any chart, or break the whole page by age, gender, region or sport-following from the bar above.</div>
-  <div class="hint"><span class="pip"></span>Click <b style="margin:0 4px">Trades</b> or <b style="margin:0 4px">Public</b> in the bar above to slice the whole page. <button id="hint-dismiss" aria-label="Dismiss">×</button></div>
+  
 </div></header>
 
-<div class="controlbar"><div class="wrap">
-  <span class="cb-label">Audience</span>
-  <div class="seg" id="seg-audience" role="tablist">
-    <button data-aud="compare" class="on" role="tab" aria-selected="true">
-      <span class="ball t"></span><span class="ball p"></span>Compare
-    </button>
-    <button data-aud="trade" role="tab"><span class="ball t"></span>Trade</button>
-    <button data-aud="public" role="tab"><span class="ball p"></span>Public</button>
-    <button data-aud="all" role="tab"><span class="ball a"></span>All</button>
+<div class="jumpbox" id="jumpbox"><div class="wrap">
+  <span class="cb-label">Jump to</span>
+  <div class="jump-pills" id="jump-pills">
+    <a class="jump-pill" data-target="Q1">Q1</a>
+    <a class="jump-pill" data-target="netexcite">Q2</a>
+    <a class="jump-pill" data-target="Q3">Q3</a>
+    <a class="jump-pill" data-target="Q4">Q4</a>
+    <a class="jump-pill" data-target="Q5">Q5</a>
+    <a class="jump-pill" data-target="Q6">Q6</a>
+    <a class="jump-pill" data-target="Q7">Q7</a>
+    <a class="jump-pill" data-target="Q8">Q8</a>
+    <a class="jump-pill" data-target="Q9">Q9</a>
+    <a class="jump-pill" data-target="Q10">Q10</a>
+    <a class="jump-pill" data-target="Q10a">Q10a</a>
+    <a class="jump-pill" data-target="Q11">Q11</a>
+    <a class="jump-pill" data-target="Q12">Q12</a>
+    <a class="jump-pill" data-target="Q13">Q13</a>
+    <a class="jump-pill" data-target="Q14">Q14</a>
   </div>
-  <span class="cb-label">Break by</span>
-  <select class="seg-select" id="sel-breakby">
-    <option value="">— none —</option>
-    <option value="S1">Age</option>
-    <option value="S2">Gender</option>
-    <option value="S5">Region</option>
-    <option value="S6">Sport-following</option>
-  </select>
-  <button class="cb-reset" id="cb-reset">Reset</button>
-  <div class="cb-status" id="cb-status"></div>
+  <button class="cb-reset" id="cb-reset" style="margin-left:auto">Reset all</button>
 </div></div>
 
 <!-- 1. Watch + Excitement -->
@@ -357,7 +366,7 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     <div class="card reveal" data-chart="Q1">
       <div class="card-head">
         <div>
-          <h3>“I am excited about the 2026 FIFA World Cup”: agreement</h3>
+          <h3>“I am excited about the 2026 FIFA World Cup”</h3>
         </div>
         <div class="card-actions" data-card-aud></div>
       </div>
@@ -399,7 +408,6 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-  <p class="basefoot">Base: 244 UK adults (Opinion Pulse) and 116 UK tradespeople (Voice of the Trade), asked about their expected watching and excitement. Fieldwork conducted 5–10 June 2026.</p>
 <div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
 </div></section>
 
@@ -457,7 +465,6 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-  <p class="basefoot">Base: 244 UK adults and 116 UK tradespeople, asked how they expect to engage with the tournament. Fieldwork conducted 5–10 June 2026.</p>
 <div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
 </div></section>
 
@@ -522,7 +529,6 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-  <p class="basefoot">Base: 244 UK adults and 116 UK tradespeople, asked who they think will win, who they support, who they expect in the semi-finals and how far their team will get. Fieldwork conducted 5–10 June 2026.</p>
 <div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
 </div></section>
 
@@ -564,7 +570,6 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-  <p class="basefoot">Base: 244 UK adults and 116 UK tradespeople, asked which brands they associate with the 2026 World Cup and what actions they've taken because of brands in sport. Fieldwork conducted 5–10 June 2026.</p>
 <div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
 </div></section>
 
@@ -593,7 +598,6 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-  <p class="basefoot">Base: 244 UK adults and 116 UK tradespeople, asked what would make them more likely to buy from a World Cup sponsor. Fieldwork conducted 5–10 June 2026.</p>
 <div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
 </div></section>
 
@@ -631,7 +635,6 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-  <p class="basefoot">Base: 116 UK tradespeople (Voice of the Trade), asked what would make a brand stand out and which factor would influence them most. Fieldwork conducted 5–10 June 2026.</p>
 <div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
 </div></section>
 
@@ -39263,10 +39266,11 @@ const DATA = {
 const SAMPLE_THRESHOLD = 30;
 
 const state = {
-  audience: 'compare',   // compare | trade | public | all
-  breakBy: '',           // '' | S1 | S2 | S5 | S6
-  sort: {},              // chartKey -> 'orig' | 'value'
-  cardAud: {},           // chartKey -> override audience
+  audience: 'compare',
+  breakBy: '',
+  sort: {},
+  cardAud: {},
+  cardBreak: {},   // chartKey -> '' | S1 | S2 | S5 | S6           // chartKey -> override audience
 };
 
 const $ = (sel, root=document) => root.querySelector(sel);
@@ -39276,28 +39280,63 @@ const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 function buildCardAud(card){
   const host = card.querySelector('[data-card-aud]');
   if(!host || host.querySelector('.seg')) return;
+  const key = card.dataset.chart;
+  if(!state.cardAud[key]) state.cardAud[key] = 'compare';
+
+  const frag = document.createDocumentFragment();
+
+  const audLabel = document.createElement('span');
+  audLabel.className = 'cb-label';
+  audLabel.textContent = 'Audience';
+  frag.appendChild(audLabel);
+
   const seg = document.createElement('div');
   seg.className = 'seg card-seg';
   seg.innerHTML = `
-    <button data-aud="compare"><span class="ball t"></span><span class="ball p"></span></button>
-    <button data-aud="trade"><span class="ball t"></span></button>
-    <button data-aud="public"><span class="ball p"></span></button>
-    <button data-aud="all"><span class="ball a"></span></button>
+    <button data-aud="compare" class="on"><span class="ball t"></span><span class="ball p"></span>Compare</button>
+    <button data-aud="trade"><span class="ball t"></span>Trade</button>
+    <button data-aud="public"><span class="ball p"></span>Public</button>
+    <button data-aud="all"><span class="ball a"></span>All</button>
   `;
   seg.addEventListener('click', e=>{
     const b = e.target.closest('button'); if(!b) return;
     seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
     b.classList.add('on');
-    const key = card.dataset.chart;
-    state.cardAud[key] = b.dataset.aud || null;
-    renderCard(card);
+    state.cardAud[key] = b.dataset.aud;
+    const brk = effectiveBreak(card);
+    if(brk && BREAKBY_KEYS.has(key)) renderBreakBy(card);
+    else renderCard(card);
   });
-  host.prepend(seg);
+  frag.appendChild(seg);
+
+  const brkLabel = document.createElement('span');
+  brkLabel.className = 'cb-label';
+  brkLabel.style.marginLeft = '6px';
+  brkLabel.textContent = 'Break by';
+  frag.appendChild(brkLabel);
+
+  const brkSel = document.createElement('select');
+  brkSel.className = 'seg-select card-break';
+  brkSel.style.borderRadius = '8px';
+  brkSel.style.padding = '5px 10px';
+  brkSel.innerHTML = `<option value="">None</option><option value="S1">Age</option><option value="S2">Gender</option><option value="S5">Region</option><option value="S6">Sport-following</option>`;
+  if(!BREAKBY_KEYS.has(key)){ brkSel.disabled = true; }
+  brkSel.addEventListener('change', ()=>{
+    state.cardBreak[key] = brkSel.value;
+    if(brkSel.value && BREAKBY_KEYS.has(key)) renderBreakBy(card);
+    else renderCard(card);
+  });
+  frag.appendChild(brkSel);
+
+  host.prepend(frag);
 }
 
 function effectiveAudience(card){
   const key = card.dataset.chart;
   return state.cardAud[key] || state.audience;
+}
+function effectiveBreak(card){
+  return state.cardBreak[card.dataset.chart] || '';
 }
 
 // ------------ data accessors with break-by ------------
@@ -39655,36 +39694,32 @@ function renderCard(card){
 }
 
 // ------------ global controls ------------
-$('#seg-audience').addEventListener('click', e=>{
-  const b = e.target.closest('button'); if(!b) return;
-  $$('#seg-audience button').forEach(x=>{x.classList.remove('on','public','trade','all');});
-  const a = b.dataset.aud;
-  b.classList.add('on');
-  if(a==='public') b.classList.add('public');
-  if(a==='all') b.classList.add('all');
-  state.audience = a;
-  renderAll();
-});
-
-$('#sel-breakby').addEventListener('change', e=>{
-  state.breakBy = e.target.value;
-  renderAll();
-});
-
-$('#cb-reset').addEventListener('click', ()=>{
-  state.audience = 'compare';
-  state.breakBy = '';
+// Global audience/breakby removed; controls are now per-card.
+// Reset all button
+const _resetBtn = $('#cb-reset');
+if(_resetBtn) _resetBtn.addEventListener('click', ()=>{
   state.sort = {};
   state.cardAud = {};
-  $('#sel-breakby').value = '';
-  $$('#seg-audience button').forEach(x=>{x.classList.remove('on','public','trade','all');});
-  $('#seg-audience button[data-aud="compare"]').classList.add('on');
-  // reset per-card aud controls
+  state.cardBreak = {};
+  // Reset per-card audience buttons to Compare
   $$('.card-seg').forEach(seg=>{
     seg.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
-    seg.querySelector('button[data-aud=""]').classList.add('on');
+    const cmp = seg.querySelector('button[data-aud="compare"]');
+    if(cmp) cmp.classList.add('on');
   });
+  // Reset per-card break-by selects
+  $$('.card-break').forEach(sel=>{ sel.value = ''; });
   renderAll();
+});
+
+// Jump-to-question pill navigation
+$$('.jump-pill').forEach(pill=>{
+  pill.addEventListener('click', e=>{
+    e.preventDefault();
+    const target = pill.dataset.target;
+    const card = document.querySelector('[data-chart="'+target+'"]');
+    if(card) card.scrollIntoView({behavior:'smooth', block:'start'});
+  });
 });
 
 // per-card sort buttons
@@ -39701,6 +39736,7 @@ document.body.addEventListener('click', e=>{
 // status bar
 function renderStatus(){
   const s = $('#cb-status');
+  if(!s) return;
   const dimLabels = {S1:'Age', S2:'Gender', S5:'Region', S6:'Sport-following'};
   const aud = state.audience;
   const audName = aud==='compare'?'Trade · Public · All':aud==='trade'?'Trade only':aud==='public'?'Public only':'All respondents';
@@ -39723,7 +39759,8 @@ const BREAKBY_TOPN = {Q11:8, Q12:8, Q13:8};
 
 function renderBreakBy(card){
   const key = card.dataset.chart;
-  if(!state.breakBy || !BREAKBY_KEYS.has(key)){
+  const dim = effectiveBreak(card);
+  if(!dim || !BREAKBY_KEYS.has(key)){
     renderCard(card);
     return;
   }
@@ -39736,7 +39773,6 @@ function renderBreakBy(card){
   if(!root) return;
   root.innerHTML='';
   renderLegend(card, aud);
-  const dim = state.breakBy;
   const dimLabels = {S1:'Age', S2:'Gender', S5:'Region', S6:'Sport-following'};
   const dimLower = dimLabels[dim].toLowerCase();
 
@@ -39795,7 +39831,8 @@ function renderBreakBy(card){
 function renderAll(){
   $$('.card[data-chart]').forEach(card=>{
     buildCardAud(card);
-    if(state.breakBy && BREAKBY_KEYS.has(card.dataset.chart)){
+    const brk = effectiveBreak(card);
+    if(brk && BREAKBY_KEYS.has(card.dataset.chart)){
       renderBreakBy(card);
     } else {
       renderCard(card);
@@ -39816,9 +39853,7 @@ const io = new IntersectionObserver(ents=>{
 $$('.card.reveal').forEach(el=>io.observe(el));
 
 // ------------ hint + cue ------------
-$('#hint-dismiss').addEventListener('click', e=>{
-  e.target.closest('.hint').style.display='none';
-});
+const _hintBtn = $('#hint-dismiss'); if(_hintBtn) _hintBtn.addEventListener('click', e=>{ e.target.closest('.hint').style.display='none'; });
 const cue = $('#cue');
 window.addEventListener('scroll', ()=>{
   cue.classList.toggle('gone', window.scrollY > 200);
