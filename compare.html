@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="brand.css">
 <style>
   /* ---- compare-specific components, on the shared brand system ---- */
+  :root{--you:#ff7a2f;--you-deep:#e85d10}
   .quiz-wrap{max-width:760px;margin:0 auto;width:100%;padding-bottom:50px}
 
   .topstatus{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:6px 0 16px}
@@ -69,6 +70,34 @@
   .ic-track{height:12px;border-radius:6px;background:rgba(0,0,0,.32);overflow:hidden}
   .ic-fill{height:100%;width:0%;border-radius:6px;background:linear-gradient(90deg,var(--cream-edge),var(--cream));transition:width .7s cubic-bezier(.16,1,.3,1)}
   .ic-row.mine .ic-fill{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta))}
+
+  /* three-way comparison rows: you (★) vs public vs trade */
+  .cmp-legend{display:flex;gap:18px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+  .cmp-legend .cl{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--chalk);opacity:.92}
+  .cmp-legend .cl i{width:13px;height:13px;border-radius:3px;display:inline-block;font-style:normal;font-size:12px;line-height:13px;text-align:center}
+  .cmp-legend .cl.pub i{background:linear-gradient(90deg,var(--cream-edge),var(--cream))}
+  .cmp-legend .cl.trd i{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta))}
+  .cmp-legend .cl.you i{width:auto;height:auto;background:none;color:var(--you);font-size:13px}
+  .cmp-row{margin-bottom:16px}
+  .cmp-row:last-child{margin-bottom:2px}
+  .cmp-lab{font-size:13px;color:var(--chalk);opacity:.85;margin-bottom:7px;line-height:1.3}
+  .cmp-row.mine{background:rgba(255,122,47,.12);border-left:2px solid var(--you);border-radius:8px;padding:9px 12px 11px;margin-left:-12px;margin-right:-12px}
+  .cmp-row.mine .cmp-lab{opacity:1;font-weight:700;color:#fff}
+  .cmp-lab .star{color:var(--you)}
+  .cmp-bar{display:flex;align-items:center;gap:10px;margin-top:5px}
+  .cmp-bar .cmp-tag{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;width:46px;flex-shrink:0}
+  .cmp-bar .cmp-tag.pub{color:var(--cream)}
+  .cmp-bar .cmp-tag.trd{color:var(--magenta)}
+  .cmp-track{flex:1;height:11px;border-radius:6px;background:rgba(0,0,0,.32);overflow:hidden}
+  .cmp-fill{height:100%;width:0%;border-radius:6px;transition:width .8s cubic-bezier(.16,1,.3,1)}
+  .cmp-fill.pub{background:linear-gradient(90deg,var(--cream-edge),var(--cream))}
+  .cmp-fill.trd{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta))}
+  .cmp-pct{font-family:"Rework Headline",system-ui;font-weight:700;font-size:12.5px;color:var(--cream);width:46px;text-align:right;flex-shrink:0}
+  .pop-badge.trd{background:rgba(214,0,108,.16);color:#ff7ab8;border-color:rgba(214,0,108,.5)}
+  .confirm-wrap{margin:4px 0 24px}
+  .confirm-btn{width:100%;justify-content:center;border-style:dashed;border-color:var(--you);color:var(--chalk)}
+  .confirm-btn:hover{border-color:var(--you);background:rgba(255,122,47,.12);color:#fff}
+  @media(prefers-reduced-motion:reduce){.cmp-fill{transition:none}}
 
   /* results */
   .results{display:none;flex-direction:column;animation:fadeUp .5s ease}
@@ -137,13 +166,13 @@
 
     <!-- INTRO -->
     <div class="hero" id="intro">
-      <div class="eyebrow"><span class="dot"></span>UK Fan Survey · n=244 public respondents</div>
-      <h1 class="title">Where do you stand vs <em>the public?</em></h1>
-      <p class="subhead">Answer <strong>13 quick questions</strong> about the 2026 FIFA World Cup — your excitement, viewing plans, brand attitudes and predictions. Then we'll reveal exactly how your answers stack up against the UK general public surveyed for this study.</p>
+      <div class="eyebrow"><span class="dot"></span>UK Fan Survey · 244 public + 116 trade respondents</div>
+      <h1 class="title">Where do you stand vs <em>the public &amp; the trade?</em></h1>
+      <p class="subhead">Answer <strong>13 quick questions</strong> about the 2026 FIFA World Cup — your excitement, viewing plans, brand attitudes and predictions. Then we'll reveal exactly how your answers stack up against both the UK general public and the trade audience surveyed for this study.</p>
       <div class="kickoff-stat">
         <div class="ks"><b>244</b><span>Public respondents</span></div>
+        <div class="ks"><b>116</b><span>Trade respondents</span></div>
         <div class="ks"><b>13</b><span>Questions</span></div>
-        <div class="ks"><b>~2 min</b><span>To complete</span></div>
       </div>
       <button class="btn btn-primary" onclick="startQuiz()">Kick off →</button>
     </div>
@@ -159,7 +188,8 @@
 
 <script id="wc-data" type="application/json">
 {
- "n": 244,
+ "n_public": 244,
+ "n_trade": 116,
  "q1": {
   "labels": [
    "Strongly Agree",
@@ -174,6 +204,13 @@
    18.4,
    9.0,
    12.3
+  ],
+  "trade": [
+   16.4,
+   35.3,
+   36.2,
+   5.2,
+   6.9
   ]
  },
  "q2": {
@@ -192,6 +229,14 @@
    9.0,
    12.3,
    2.9
+  ],
+  "trade": [
+   3.4,
+   7.8,
+   45.7,
+   28.4,
+   12.9,
+   1.7
   ]
  },
  "q3": {
@@ -208,6 +253,13 @@
    13.1,
    6.1,
    13.5
+  ],
+  "trade": [
+   47.4,
+   31.0,
+   9.5,
+   6.9,
+   5.2
   ]
  },
  "q4": {
@@ -228,6 +280,15 @@
    45.1,
    47.1,
    20.1
+  ],
+  "trade": [
+   32.8,
+   76.7,
+   31.9,
+   59.5,
+   59.5,
+   66.4,
+   7.8
   ]
  },
  "q5": {
@@ -246,6 +307,14 @@
    6.1,
    5.3,
    18.9
+  ],
+  "trade": [
+   78.4,
+   14.7,
+   29.3,
+   5.2,
+   13.8,
+   7.8
   ]
  },
  "q6": {
@@ -270,6 +339,17 @@
    10.2,
    4.1,
    34.8
+  ],
+  "trade": [
+   36.2,
+   20.7,
+   18.1,
+   6.0,
+   12.9,
+   23.3,
+   13.8,
+   2.6,
+   31.0
   ]
  },
  "q7": {
@@ -294,6 +374,17 @@
    6.1,
    4.9,
    44.3
+  ],
+  "trade": [
+   33.6,
+   15.5,
+   5.2,
+   6.9,
+   28.4,
+   9.5,
+   6.0,
+   9.5,
+   41.4
   ]
  },
  "q8": {
@@ -312,6 +403,14 @@
    13.5,
    4.5,
    31.1
+  ],
+  "trade": [
+   60.3,
+   18.1,
+   50.0,
+   18.1,
+   3.4,
+   21.6
   ]
  },
  "q9": {
@@ -336,105 +435,18 @@
    13.9,
    11.5,
    24.6
+  ],
+  "trade": [
+   37.9,
+   22.4,
+   43.1,
+   48.3,
+   54.3,
+   28.4,
+   25.0,
+   13.8,
+   14.7
   ]
- },
- "q11_all": {
-  "England": 19.67,
-  "Don't know": 16.8,
-  "Spain": 12.3,
-  "Brazil": 12.3,
-  "France": 11.48,
-  "Scotland": 6.97,
-  "Argentina": 4.1,
-  "Austria": 2.87,
-  "Portugal": 2.87,
-  "Belgium": 1.64,
-  "Algeria": 1.23,
-  "Germany": 1.23,
-  "Switzerland": 0.82,
-  "United States (host)": 0.82,
-  "Bosnia and Herzegovina": 0.82,
-  "Japan": 0.82,
-  "Iraq": 0.41,
-  "Croatia": 0.41,
-  "Senegal": 0.41,
-  "Australia": 0.41,
-  "Turkey": 0.41,
-  "Canada (host)": 0.41,
-  "New Zealand": 0.41,
-  "Ghana": 0.41
- },
- "q12_all": {
-  "France": 43.0,
-  "Brazil": 40.2,
-  "England": 37.7,
-  "Spain": 29.9,
-  "Germany": 29.5,
-  "Argentina": 25.0,
-  "Don't know": 17.2,
-  "Portugal": 14.3,
-  "United States (host)": 6.1,
-  "Croatia": 6.1,
-  "Scotland": 5.7,
-  "Algeria": 4.9,
-  "Belgium": 4.9,
-  "Canada (host)": 3.7,
-  "Mexico (host)": 3.3,
-  "Japan": 2.9,
-  "Morocco": 2.9,
-  "Netherlands": 2.9,
-  "Australia": 2.5,
-  "Austria": 2.5,
-  "Colombia": 2.5,
-  "Cape Verde": 2.0,
-  "Bosnia and Herzegovina": 1.6,
-  "Ghana": 1.6,
-  "New Zealand": 1.6,
-  "Uruguay": 1.6,
-  "Egypt": 1.2,
-  "Iraq": 0.8,
-  "Norway": 0.8,
-  "South Korea": 0.8,
-  "Switzerland": 0.8,
-  "Uzbekistan": 0.8,
-  "Curacao": 0.4,
-  "Czechia": 0.4,
-  "Iran": 0.4,
-  "Ivory Coast": 0.4,
-  "Panama": 0.4,
-  "Paraguay": 0.4,
-  "Qatar": 0.4,
-  "Saudi Arabia": 0.4,
-  "Senegal": 0.4,
-  "South Africa": 0.4,
-  "Tunisia": 0.4,
-  "Turkey": 0.4
- },
- "q13_all": {
-  "England": 50.8,
-  "Scotland": 18.9,
-  "Don't know": 13.1,
-  "Brazil": 2.9,
-  "Algeria": 1.2,
-  "Spain": 1.2,
-  "Austria": 1.2,
-  "Argentina": 1.2,
-  "Belgium": 0.8,
-  "Ghana": 0.8,
-  "Japan": 0.8,
-  "Australia": 0.8,
-  "Germany": 0.8,
-  "Iraq": 0.4,
-  "Croatia": 0.4,
-  "France": 0.4,
-  "Morocco": 0.4,
-  "Mexico (host)": 0.4,
-  "Portugal": 0.4,
-  "Switzerland": 0.4,
-  "Turkey": 0.4,
-  "United States (host)": 0.4,
-  "Senegal": 0.4,
-  "New Zealand": 0.4
  },
  "q14": {
   "labels": [
@@ -447,14 +459,182 @@
    "Winners"
   ],
   "pct": [
-   6.6,
-   11.9,
-   9.0,
-   19.3,
-   17.6,
-   5.3,
-   17.2
+   7.5,
+   13.7,
+   10.4,
+   22.2,
+   20.3,
+   6.1,
+   19.8
+  ],
+  "trade": [
+   4.7,
+   9.3,
+   10.3,
+   29.0,
+   22.4,
+   6.5,
+   17.8
   ]
+ },
+ "q11_all": {
+  "Algeria": 1.2,
+  "Argentina": 4.1,
+  "Australia": 0.4,
+  "Austria": 2.9,
+  "Belgium": 1.6,
+  "Bosnia and Herzegovina": 0.8,
+  "Brazil": 12.3,
+  "Canada (host)": 0.4,
+  "Croatia": 0.4,
+  "England": 19.7,
+  "France": 11.5,
+  "Germany": 1.2,
+  "Ghana": 0.4,
+  "Iraq": 0.4,
+  "Japan": 0.8,
+  "New Zealand": 0.4,
+  "Portugal": 2.9,
+  "Scotland": 7.0,
+  "Senegal": 0.4,
+  "Spain": 12.3,
+  "Switzerland": 0.8,
+  "Turkey": 0.4,
+  "United States (host)": 0.8,
+  "Don't know": 16.8
+ },
+ "q11_trade": {
+  "Argentina": 7.8,
+  "Belgium": 0.9,
+  "Brazil": 10.3,
+  "Ecuador": 0.9,
+  "England": 14.7,
+  "France": 14.7,
+  "Germany": 6.9,
+  "Iran": 0.9,
+  "Japan": 1.7,
+  "Netherlands": 0.9,
+  "Portugal": 6.0,
+  "Scotland": 2.6,
+  "Spain": 22.4,
+  "United States (host)": 2.6,
+  "Don't know": 6.9
+ },
+ "q12_all": {
+  "Algeria": 4.9,
+  "Argentina": 25.0,
+  "Australia": 2.5,
+  "Austria": 2.5,
+  "Belgium": 4.9,
+  "Bosnia and Herzegovina": 1.6,
+  "Brazil": 40.2,
+  "Canada (host)": 3.7,
+  "Cape Verde": 2.0,
+  "Colombia": 2.5,
+  "Croatia": 6.1,
+  "Curacao": 0.4,
+  "Czechia": 0.4,
+  "Egypt": 1.2,
+  "England": 37.7,
+  "France": 43.0,
+  "Germany": 29.5,
+  "Ghana": 1.6,
+  "Iran": 0.4,
+  "Iraq": 0.8,
+  "Ivory Coast": 0.4,
+  "Japan": 2.9,
+  "Mexico (host)": 3.3,
+  "Morocco": 2.9,
+  "Netherlands": 2.9,
+  "New Zealand": 1.6,
+  "Norway": 0.8,
+  "Panama": 0.4,
+  "Paraguay": 0.4,
+  "Portugal": 14.3,
+  "Qatar": 0.4,
+  "Saudi Arabia": 0.4,
+  "Scotland": 5.7,
+  "Senegal": 0.4,
+  "South Africa": 0.4,
+  "South Korea": 0.8,
+  "Spain": 29.9,
+  "Switzerland": 0.8,
+  "Tunisia": 0.4,
+  "Turkey": 0.4,
+  "United States (host)": 6.1,
+  "Uruguay": 1.6,
+  "Uzbekistan": 0.8,
+  "Don't know": 17.2
+ },
+ "q12_trade": {
+  "Algeria": 0.9,
+  "Argentina": 40.5,
+  "Belgium": 5.2,
+  "Bosnia and Herzegovina": 0.9,
+  "Brazil": 50.0,
+  "Canada (host)": 1.7,
+  "Croatia": 4.3,
+  "Egypt": 1.7,
+  "England": 53.4,
+  "France": 60.3,
+  "Germany": 39.7,
+  "Ivory Coast": 1.7,
+  "Japan": 2.6,
+  "Mexico (host)": 4.3,
+  "Netherlands": 8.6,
+  "Norway": 0.9,
+  "Paraguay": 1.7,
+  "Portugal": 17.2,
+  "Scotland": 3.4,
+  "Spain": 57.8,
+  "Sweden": 0.9,
+  "Tunisia": 0.9,
+  "Turkey": 0.9,
+  "United States (host)": 5.2,
+  "Don't know": 6.0
+ },
+ "q13_all": {
+  "Algeria": 1.2,
+  "Argentina": 1.2,
+  "Australia": 0.8,
+  "Austria": 1.2,
+  "Belgium": 0.8,
+  "Bosnia and Herzegovina": 0.4,
+  "Brazil": 2.9,
+  "Canada (host)": 0.4,
+  "Colombia": 0.4,
+  "Croatia": 0.4,
+  "Curacao": 0.4,
+  "England": 50.8,
+  "France": 0.4,
+  "Germany": 0.8,
+  "Ghana": 0.8,
+  "Iraq": 0.4,
+  "Japan": 0.8,
+  "Mexico (host)": 0.4,
+  "Portugal": 0.4,
+  "Saudi Arabia": 0.4,
+  "Scotland": 18.9,
+  "South Korea": 0.4,
+  "Spain": 1.2,
+  "Switzerland": 0.4,
+  "United States (host)": 0.4,
+  "Don't know": 13.1
+ },
+ "q13_trade": {
+  "Algeria": 0.9,
+  "Argentina": 0.9,
+  "Ecuador": 0.9,
+  "England": 69.8,
+  "France": 0.9,
+  "Germany": 0.9,
+  "Iran": 0.9,
+  "Netherlands": 0.9,
+  "Paraguay": 1.7,
+  "Portugal": 0.9,
+  "Scotland": 11.2,
+  "Spain": 2.6,
+  "Don't know": 7.8
  },
  "countries": [
   "Algeria",
@@ -531,6 +711,7 @@ const QUESTIONS = [
 
 let step = -1; // -1 = intro
 const answers = {};
+const revealed = {}; // multi questions: comparison shown only after "Confirm selections"
 let _card = {};
 
 function startQuiz(){
@@ -601,17 +782,21 @@ function renderQuestion(){
       </div>`;
   }
 
-  // Build inline comparison if the question has been answered
+  // Build inline comparison once the question has been answered. For the
+  // "select all that apply" questions the user must confirm their picks first.
   let compHtml = '';
   if(q.type === 'single' && answers[q.key] !== undefined){
     compHtml = buildInlineComp(q.key, [answers[q.key]]);
   } else if(q.type === 'multi' && (answers[q.key]||[]).length > 0){
-    compHtml = buildInlineComp(q.key, answers[q.key]);
+    compHtml = revealed[q.key] ? buildInlineComp(q.key, answers[q.key]) : confirmBtn(q.key);
   } else if(q.type === 'country' && answers[q.key]){
-    const lookup = q.key === 'q11' ? DATA.q11_all : DATA.q13_all;
-    compHtml = buildInlineCountryComp(lookup, answers[q.key], 6);
+    const pubLookup = q.key === 'q11' ? DATA.q11_all : DATA.q13_all;
+    const tradeLookup = q.key === 'q11' ? DATA.q11_trade : DATA.q13_trade;
+    compHtml = buildInlineCountryComp(pubLookup, tradeLookup, answers[q.key], 6);
   } else if(q.type === 'country-multi' && (answers[q.key]||[]).length > 0){
-    compHtml = buildInlineCountryComp(DATA.q12_all, answers[q.key]||[], 8);
+    compHtml = revealed[q.key]
+      ? buildInlineCountryComp(DATA.q12_all, DATA.q12_trade, answers[q.key]||[], 8)
+      : confirmBtn(q.key);
   }
 
   area.innerHTML = `
@@ -631,7 +816,7 @@ function renderQuestion(){
 
   requestAnimationFrame(()=>{
     setTimeout(()=>{
-      document.querySelectorAll('.ic-fill[data-w]').forEach(el=>{
+      document.querySelectorAll('.cmp-fill[data-w]').forEach(el=>{
         el.style.width = el.dataset.w + '%';
       });
     }, 30);
@@ -649,6 +834,18 @@ function selectMulti(key, idx){
   const pos = arr.indexOf(idx);
   if(pos === -1) arr.push(idx); else arr.splice(pos,1);
   answers[key] = arr;
+  renderQuestion();
+}
+
+function confirmBtn(key){
+  const n = (answers[key]||[]).length;
+  return `<div class="confirm-wrap">
+    <button class="btn confirm-btn" onclick="revealComp('${key}')">✓ Confirm ${n} selection${n===1?'':'s'} &amp; compare</button>
+  </div>`;
+}
+
+function revealComp(key){
+  revealed[key] = true;
   renderQuestion();
 }
 
@@ -710,29 +907,55 @@ function nextQuestion(){
 
 function fmtPct(v){ return v.toFixed(1) + '%'; }
 
+const CMP_LEGEND = `<div class="cmp-legend">`+
+  `<span class="cl you"><i>★</i>Your pick</span>`+
+  `<span class="cl pub"><i></i>Public · n=${DATA.n_public}</span>`+
+  `<span class="cl trd"><i></i>Trade · n=${DATA.n_trade}</span>`+
+  `</div>`;
+
+// "public's top" / "trade's top" badges for the most-popular answer in each audience.
+function topBadges(isPubTop, isTradeTop){
+  let b = '';
+  if(isPubTop)   b += ' <span class="pop-badge">public\'s top</span>';
+  if(isTradeTop) b += ' <span class="pop-badge trd">trade\'s top</span>';
+  return b;
+}
+
+// One comparison row: your pick (★) marker + a Public bar and a Trade bar.
+function cmpRow(label, pub, trade, mine, badge){
+  return `<div class="cmp-row${mine?' mine':''}">
+    <div class="cmp-lab">${mine?'<span class="star">★</span> ':''}${label}${badge||''}</div>
+    <div class="cmp-bar">
+      <span class="cmp-tag pub">Public</span>
+      <div class="cmp-track"><div class="cmp-fill pub" data-w="${pub}"></div></div>
+      <span class="cmp-pct">${fmtPct(pub)}</span>
+    </div>
+    <div class="cmp-bar">
+      <span class="cmp-tag trd">Trade</span>
+      <div class="cmp-track"><div class="cmp-fill trd" data-w="${trade}"></div></div>
+      <span class="cmp-pct">${fmtPct(trade)}</span>
+    </div>
+  </div>`;
+}
+
 function buildInlineComp(qkey, userIndices){
   const d = DATA[qkey];
   const maxPct = Math.max(...d.pct);
+  const maxTrade = Math.max(...d.trade);
   let rows = '';
   d.labels.forEach((lab, i)=>{
     const mine = userIndices.includes(i);
-    const isTop = d.pct[i] === maxPct;
-    rows += `<div class="ic-row${mine?' mine':''}">
-      <div class="ic-lbl-row">
-        <span class="ic-lab">${mine?'★ ':''}${lab}${isTop?' <span class="pop-badge">public\'s top</span>':''}</span>
-        <span class="ic-val">${fmtPct(d.pct[i])}</span>
-      </div>
-      <div class="ic-track"><div class="ic-fill" data-w="${d.pct[i]}"></div></div>
-    </div>`;
+    rows += cmpRow(lab, d.pct[i], d.trade[i], mine, topBadges(d.pct[i] === maxPct, d.trade[i] === maxTrade));
   });
   return `<div class="inline-comp">
-    <div class="ic-eyebrow">How the public answered</div>
+    <div class="ic-eyebrow">You vs the public vs the trade</div>
+    ${CMP_LEGEND}
     ${rows}
   </div>`;
 }
 
-function buildInlineCountryComp(lookup, userPicks, topN){
-  const sorted = Object.entries(lookup).sort((a,b)=>b[1]-a[1]);
+function buildInlineCountryComp(pubLookup, tradeLookup, userPicks, topN){
+  const sorted = Object.entries(pubLookup).sort((a,b)=>b[1]-a[1]);
   const top = sorted.slice(0,topN).map(e=>e[0]);
   const picks = Array.isArray(userPicks) ? userPicks : (userPicks ? [userPicks] : []);
   let labels = [...top];
@@ -740,21 +963,17 @@ function buildInlineCountryComp(lookup, userPicks, topN){
     if(c && !labels.some(x=>x.toLowerCase()===c.toLowerCase())) labels.push(c);
   });
   const maxPct = sorted[0][1];
+  const maxTrade = Math.max(0, ...Object.values(tradeLookup));
   let rows = '';
   labels.forEach(c=>{
-    const pct = lookup[c] || 0;
+    const pct = pubLookup[c] || 0;
+    const tpct = tradeLookup[c] || 0;
     const mine = picks.some(x=>x.toLowerCase()===c.toLowerCase());
-    const isTop = pct === maxPct;
-    rows += `<div class="ic-row${mine?' mine':''}">
-      <div class="ic-lbl-row">
-        <span class="ic-lab">${mine?'★ ':''}${c}${isTop?' <span class="pop-badge">public\'s top</span>':''}</span>
-        <span class="ic-val">${fmtPct(pct)}</span>
-      </div>
-      <div class="ic-track"><div class="ic-fill" data-w="${pct}"></div></div>
-    </div>`;
+    rows += cmpRow(c, pct, tpct, mine, topBadges(pct === maxPct, tpct > 0 && tpct === maxTrade));
   });
   return `<div class="inline-comp">
-    <div class="ic-eyebrow">How the public answered</div>
+    <div class="ic-eyebrow">You vs the public vs the trade</div>
+    ${CMP_LEGEND}
     ${rows}
   </div>`;
 }
@@ -762,31 +981,25 @@ function buildInlineCountryComp(lookup, userPicks, topN){
 function buildBarBlock(qkey, title, note, userIndices){
   const d = DATA[qkey];
   const maxPct = Math.max(...d.pct);
+  const maxTrade = Math.max(...d.trade);
   const userMatchedTop = userIndices.some(i => d.pct[i] === maxPct);
   let rows = '';
   d.labels.forEach((lab, i)=>{
     const mine = userIndices.includes(i);
-    const isTop = d.pct[i] === maxPct;
-    rows += `
-      <div class="bar-row ${mine ? 'mine' : ''}">
-        <div class="bar-label">
-          <span class="lab">${mine ? '★ ' : ''}${lab}${isTop ? ' <span class="pop-badge">public\'s top</span>' : ''}</span>
-          <span class="val">${fmtPct(d.pct[i])} of public</span>
-        </div>
-        <div class="bar-track"><div class="bar-fill" data-w="${d.pct[i]}"></div></div>
-      </div>`;
+    rows += cmpRow(lab, d.pct[i], d.trade[i], mine, topBadges(d.pct[i] === maxPct, d.trade[i] === maxTrade));
   });
-  const matchNote = userMatchedTop ? '<div class="match-note">You matched the crowd\'s top pick</div>' : '';
+  const matchNote = userMatchedTop ? '<div class="match-note">You matched the public\'s top pick</div>' : '';
   return `<div class="res-block">
       <h3 class="res-q">${title}</h3>
       <p class="res-q-note">${note}</p>
+      ${CMP_LEGEND}
       ${matchNote}
       ${rows}
     </div>`;
 }
 
-function buildCountryBlock(lookup, title, note, userPicks, topN){
-  const sorted = Object.entries(lookup).sort((a,b)=>b[1]-a[1]);
+function buildCountryBlock(pubLookup, tradeLookup, title, note, userPicks, topN){
+  const sorted = Object.entries(pubLookup).sort((a,b)=>b[1]-a[1]);
   const top = sorted.slice(0,topN).map(e=>e[0]);
   let labels = top.slice();
   const picks = Array.isArray(userPicks) ? userPicks : (userPicks ? [userPicks] : []);
@@ -795,22 +1008,20 @@ function buildCountryBlock(lookup, title, note, userPicks, topN){
   });
   const topPct = sorted[0][1];
   const topCountry = sorted[0][0];
+  const maxTrade = Math.max(0, ...Object.values(tradeLookup));
   const userMatchedTop = picks.some(x=>x.toLowerCase()===topCountry.toLowerCase());
   let rows = '';
   labels.forEach(c=>{
-    const pct = lookup[c] || 0;
+    const pct = pubLookup[c] || 0;
+    const tpct = tradeLookup[c] || 0;
     const mine = picks.some(x=>x.toLowerCase()===c.toLowerCase());
-    const isTop = pct === topPct;
-    rows += `
-      <div class="bar-row ${mine ? 'mine' : ''}">
-        <div class="bar-label"><span class="lab">${mine ? '★ ' : ''}${c}${isTop ? ' <span class="pop-badge">public\'s top</span>' : ''}</span><span class="val">${fmtPct(pct)} of public</span></div>
-        <div class="bar-track"><div class="bar-fill" data-w="${pct}"></div></div>
-      </div>`;
+    rows += cmpRow(c, pct, tpct, mine, topBadges(pct === topPct, tpct > 0 && tpct === maxTrade));
   });
-  const matchNote = userMatchedTop ? '<div class="match-note">You matched the crowd\'s top pick</div>' : '';
+  const matchNote = userMatchedTop ? '<div class="match-note">You matched the public\'s top pick</div>' : '';
   return `<div class="res-block">
       <h3 class="res-q">${title}</h3>
       <p class="res-q-note">${note}</p>
+      ${CMP_LEGEND}
       ${matchNote}
       ${rows}
     </div>`;
@@ -1061,7 +1272,7 @@ function downloadPersonaCard(){
     ctx.font='600 21px "Rework Text",Archivo,sans-serif'; ctx.fillStyle=chalk;
     ctx.fillText('How do you compare?', PAD, ftY+38);
     ctx.font='400 17px "Rework Text",Archivo,sans-serif'; ctx.fillStyle=muted;
-    ctx.fillText('2026 World Cup Fan Pulse  ·  n=244 UK general public respondents', PAD, ftY+66);
+    ctx.fillText('2026 World Cup Fan Pulse  ·  244 UK public + 116 trade respondents', PAD, ftY+66);
 
     // ── Download ──
     canvas.toBlob(blob=>{
@@ -1106,7 +1317,7 @@ function showResults(){
     <div class="res-header">
       <div class="eyebrow">Full time</div>
       <h2 class="res-title">Your <em>Fan Pulse</em> report</h2>
-      <p class="lede" style="margin-bottom:0;">Here's how your 13 answers compare against ${DATA.n} members of the UK public surveyed about the 2026 World Cup.</p>
+      <p class="lede" style="margin-bottom:0;">Here's how your 13 answers stack up against <strong>${DATA.n_public} UK general public</strong> respondents and <strong>${DATA.n_trade} trade</strong> respondents surveyed about the 2026 World Cup.</p>
     </div>
 
     <div class="persona-card">
@@ -1124,7 +1335,7 @@ function showResults(){
       <div class="big">${matches}/${totalScored}</div>
       <div class="desc">
         <strong>Crowd Sync Score</strong> — the number of times your pick matched the public's most popular answer across the scaled &amp; prediction questions.<br>
-        On excitement, <strong>${fmtPct(q1pct)}</strong> of the public picked the same answer as you (<strong>${q1label}</strong>).
+        On excitement, <strong>${fmtPct(q1pct)}</strong> of the public picked the same answer as you (<strong>${q1label}</strong>) — versus <strong>${fmtPct(DATA.q1.trade[answers.q1])}</strong> of the trade.
       </div>
     </div>
   `;
@@ -1145,20 +1356,20 @@ function showResults(){
   html += buildBarBlock('q9', 'World Cup activities & engagement', 'Multiple selections allowed — % who picked each.', answers.q9 || []);
 
   // Q11: predicted winner
-  html += buildCountryBlock(DATA.q11_all, 'Predicted World Cup winner', 'Top public picks, plus yours if not shown. Your pick marked with ★.', answers.q11, 8);
+  html += buildCountryBlock(DATA.q11_all, DATA.q11_trade, 'Predicted World Cup winner', 'Ranked by the public\'s top picks, plus yours if not shown.', answers.q11, 8);
 
   // Q12: semi-final picks
-  html += buildCountryBlock(DATA.q12_all, 'Nations expected to reach the semi-finals', 'Top public picks — % who selected each nation. Your picks marked with ★.', answers.q12 || [], 10);
+  html += buildCountryBlock(DATA.q12_all, DATA.q12_trade, 'Nations expected to reach the semi-finals', 'Ranked by the public\'s top picks — % who selected each nation.', answers.q12 || [], 10);
 
   // Q13: supported nation
-  html += buildCountryBlock(DATA.q13_all, 'Nation you\'re supporting', '% of public backing each nation. Your pick marked with ★.', answers.q13, 8);
+  html += buildCountryBlock(DATA.q13_all, DATA.q13_trade, 'Nation you\'re supporting', '% of each audience backing each nation.', answers.q13, 8);
 
   // Q14: how far supported team goes
-  html += buildBarBlock('q14', 'How far your supported team will go', 'Distribution of public predictions.', [answers.q14]);
+  html += buildBarBlock('q14', 'How far your supported team will go', 'Distribution of predictions.', [answers.q14]);
 
   html += `
     <div class="restart-row"><button class="btn btn-ghost" onclick="location.reload()">↺ Start over</button></div>
-    <div class="footer-note">Comparison data drawn only from the survey's general public sample (n=${DATA.n}).</div>
+    <div class="footer-note">Public sample n=${DATA.n_public} (UK general public) · Trade sample n=${DATA.n_trade} (Voice of the Trade). Your pick marked with ★.</div>
   `;
 
   r.innerHTML = html;
@@ -1167,7 +1378,7 @@ function showResults(){
   // animate bars in
   requestAnimationFrame(()=>{
     setTimeout(()=>{
-      document.querySelectorAll('.bar-fill').forEach(el=>{
+      document.querySelectorAll('.cmp-fill').forEach(el=>{
         el.style.width = el.dataset.w + '%';
       });
     }, 60);
