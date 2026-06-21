@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare Yourself — 2026 World Cup Fan Pulse</title>
+<link rel="stylesheet" href="brand.css">
+<style>
+  /* ---- compare-specific components, on the shared brand system ---- */
+  .quiz-wrap{max-width:760px;margin:0 auto;width:100%;padding-bottom:50px}
+
+  .topstatus{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:6px 0 16px}
+  .sb-brand{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--cream);font-weight:600;display:flex;align-items:center;gap:10px}
+  .sb-brand .dot{width:8px;height:8px;border-radius:50%;background:var(--magenta);box-shadow:0 0 12px var(--magenta)}
+  .sb-clock{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream);opacity:.8;font-weight:600}
+  .sb-clock b{color:#fff}
+  .progress-track{height:6px;border-radius:6px;background:rgba(0,0,0,.32);overflow:hidden;margin-bottom:30px}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--magenta-deep),var(--magenta));border-radius:6px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+  /* intro hero */
+  #intro.hero{display:flex;flex-direction:column;padding:6px 0 10px}
+  .kickoff-stat{display:flex;gap:26px;flex-wrap:wrap;margin:26px 0 30px}
+  .kickoff-stat .ks{border-left:2px solid var(--magenta);padding-left:14px}
+  .kickoff-stat .ks b{display:block;font-family:"Rework Headline","Rework Display",system-ui;font-weight:700;font-size:28px;color:var(--chalk);line-height:1.1}
+  .kickoff-stat .ks span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream);opacity:.82}
+
+  /* question screens */
+  .q-screen{display:none;flex-direction:column;animation:fadeUp .4s ease}
+  .q-screen.active{display:flex}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .q-kicker{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--cream);font-weight:600;margin-bottom:12px}
+  .q-title{font-family:"Rework Headline","Rework Display",system-ui;font-weight:700;font-size:clamp(24px,4.6vw,38px);line-height:1.06;letter-spacing:-.01em;margin-bottom:8px;max-width:24ch}
+  .q-sub{font-size:14px;color:var(--chalk);opacity:.85;margin-bottom:26px}
+
+  .options{display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+  .opt{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--card-edge);border-radius:12px;padding:15px 18px;cursor:pointer;text-align:left;font-family:inherit;font-size:15px;color:var(--chalk);transition:all .15s}
+  .opt:hover{border-color:var(--magenta)}
+  .opt .num{font-size:11px;color:var(--cream);border:1px solid var(--card-edge);border-radius:50%;width:24px;height:24px;min-width:24px;display:flex;align-items:center;justify-content:center;font-weight:600}
+  .opt-label{flex:1}
+  .opt.selected{border-color:var(--magenta);background:rgba(214,0,108,.12)}
+  .opt.selected .num{background:var(--magenta);border-color:var(--magenta);color:#fff}
+  .opt-check{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--card-edge);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .opt.selected .opt-check{background:var(--magenta);border-color:var(--magenta)}
+  .opt.selected .opt-check::after{content:"✓";font-size:12px;color:#fff;font-weight:700}
+  .hint{font-size:12.5px;color:var(--cream);opacity:.82;margin-bottom:14px;font-style:italic}
+
+  .country-search{width:100%;padding:13px 16px;border-radius:10px;border:1px solid var(--card-edge);background:var(--card);color:var(--chalk);font-family:inherit;font-size:14.5px;margin-bottom:14px}
+  .country-search::placeholder{color:var(--grey-mute)}
+  .country-search:focus{outline:none;border-color:var(--magenta)}
+  .country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;max-height:300px;overflow-y:auto;padding-right:4px;margin-bottom:24px}
+  .country-grid::-webkit-scrollbar{width:6px}
+  .country-grid::-webkit-scrollbar-thumb{background:rgba(241,244,236,.2);border-radius:4px}
+  .c-chip{border:1px solid var(--card-edge);background:var(--card);color:var(--chalk);border-radius:8px;padding:10px 8px;text-align:center;font-size:13px;cursor:pointer;transition:all .12s;font-family:inherit}
+  .c-chip:hover{border-color:var(--magenta)}
+  .c-chip.selected{background:var(--magenta);color:#fff;border-color:var(--magenta);font-weight:600}
+
+  .nav-row{display:flex;gap:12px;justify-content:space-between;align-items:center}
+  .nav-row .right{display:flex;gap:10px}
+
+  /* inline comparison (during questions) */
+  .inline-comp{background:var(--card);border:1px solid var(--card-edge);border-radius:14px;padding:18px 18px 16px;margin-bottom:22px}
+  .ic-eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--cream);opacity:.85;font-weight:600;margin-bottom:14px}
+  .ic-row{margin-bottom:11px}
+  .ic-row:last-child{margin-bottom:0}
+  .ic-lbl-row{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;margin-bottom:5px;gap:10px}
+  .ic-lbl-row .ic-lab{color:var(--chalk);opacity:.82;flex:1}
+  .ic-row.mine .ic-lbl-row .ic-lab{opacity:1;font-weight:600;color:#fff}
+  .ic-lbl-row .ic-val{font-family:"Rework Headline",system-ui;font-weight:700;font-size:12.5px;color:var(--cream);flex-shrink:0}
+  .ic-track{height:12px;border-radius:6px;background:rgba(0,0,0,.32);overflow:hidden}
+  .ic-fill{height:100%;width:0%;border-radius:6px;background:linear-gradient(90deg,var(--cream-edge),var(--cream));transition:width .7s cubic-bezier(.16,1,.3,1)}
+  .ic-row.mine .ic-fill{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta))}
+
+  /* results */
+  .results{display:none;flex-direction:column;animation:fadeUp .5s ease}
+  .results.active{display:flex}
+  .res-header{margin-bottom:14px;padding-top:6px}
+  .res-title{font-family:"Rework Headline","Rework Display",system-ui;font-weight:700;font-size:clamp(32px,7vw,56px);line-height:1;letter-spacing:-.02em;margin-bottom:12px}
+  .res-title em{font-style:normal;color:var(--magenta)}
+
+  .persona-card{position:relative;border:1px solid var(--card-edge);background:var(--card);border-radius:18px;padding:24px 22px;margin:6px 0 26px;overflow:hidden}
+  .persona-card::before{content:"";position:absolute;top:-40px;right:-40px;width:160px;height:160px;border:2px solid rgba(214,0,108,.18);border-radius:50%}
+  .persona-eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--cream);opacity:.85;font-weight:600;margin-bottom:12px}
+  .persona-name{font-family:"Rework Headline","Rework Display",system-ui;font-weight:700;font-size:clamp(26px,6vw,40px);line-height:1.02;margin-bottom:4px}
+  .persona-tagline{font-size:13.5px;color:var(--magenta);font-weight:600;margin-bottom:16px;font-style:italic}
+  .persona-blurb{font-size:14.5px;line-height:1.65;color:var(--chalk);opacity:.9;margin-bottom:18px;max-width:58ch}
+  .persona-blurb strong{color:var(--cream)}
+  .persona-tags{display:flex;flex-wrap:wrap;gap:8px}
+  .p-tag{font-size:11px;letter-spacing:.04em;border:1px solid var(--card-edge);color:var(--chalk);padding:6px 12px;border-radius:999px;background:rgba(0,0,0,.18)}
+
+  .scoreline{display:flex;align-items:center;gap:18px;border:1px solid var(--card-edge);background:var(--card);border-radius:16px;padding:18px 20px;margin:10px 0 30px}
+  .scoreline .big{font-family:"Rework Headline","Rework Display",system-ui;font-weight:700;font-size:46px;color:var(--magenta);line-height:1;flex-shrink:0}
+  .scoreline .desc{font-size:13.5px;color:var(--chalk);opacity:.88;line-height:1.5}
+  .scoreline .desc strong{color:var(--cream)}
+
+  .res-block{margin-bottom:34px}
+  .res-q{font-family:"Rework Headline","Rework Display",system-ui;font-weight:700;font-size:18px;margin-bottom:4px;letter-spacing:-.005em}
+  .res-q-note{font-size:12.5px;color:var(--cream);opacity:.78;margin-bottom:14px}
+  .bar-label{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;margin-bottom:5px;gap:10px}
+  .bar-label .lab{color:var(--chalk);opacity:.82;flex:1}
+  .bar-row.mine .bar-label .lab{color:#fff;font-weight:600;opacity:1}
+  .bar-label .val{font-family:"Rework Headline",system-ui;font-weight:700;color:var(--cream);font-size:12.5px;flex-shrink:0}
+  .bar-fill{background:linear-gradient(90deg,var(--cream-edge),var(--cream))}
+  .bar-row.mine .bar-fill{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta))}
+  .pin{position:absolute;top:-3px;width:2px;height:17px;background:var(--magenta);display:none}
+  .match-note{font-size:11.5px;color:var(--cream);letter-spacing:.03em;margin-bottom:12px}
+
+  .footer-note{text-align:center;font-size:12px;color:var(--cream);opacity:.75;margin-top:10px;padding-top:18px;border-top:1px dashed var(--card-edge)}
+  .restart-row{display:flex;justify-content:center;margin:28px 0 6px}
+</style>
+</head>
+<body>
+
+<div class="pitch-bg"></div>
+<div class="pitch-lines">
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="none" aria-hidden="true">
+    <rect x="40" y="60" width="1120" height="680" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <line x1="600" y1="60" x2="600" y2="740" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="600" cy="400" r="92" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="600" cy="400" r="3" fill="#ffffff"/>
+    <rect x="40" y="240" width="180" height="320" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <rect x="40" y="320" width="80" height="160" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <rect x="980" y="240" width="180" height="320" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <rect x="1080" y="320" width="80" height="160" fill="none" stroke="#ffffff" stroke-width="2"/>
+  </svg>
+</div>
+
+<div class="wrap">
+
+  <div class="brandbar">
+    <a class="brandbar-link" href="https://potentia-sports.co.uk/" target="_blank" rel="noopener noreferrer"><img src="logo-potentia.png" alt="Potentia & Potentia Sports" class="potentia"></a>
+    <a class="brandbar-link" href="https://potentia-insight.co.uk/what-we-do/panels-community-expertise/voice-of-the-trade/" target="_blank" rel="noopener noreferrer"><img src="logo-vott.png" alt="Voice of the Trade" class="vott"></a>
+  </div>
+
+  <div class="quiz-wrap">
+
+    <div class="topstatus">
+      <div class="sb-brand"><span class="dot"></span>Fan Pulse · WC26</div>
+      <div class="sb-clock" id="sbClock"><b>KICK-OFF</b></div>
+    </div>
+
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+    <!-- INTRO -->
+    <div class="hero" id="intro">
+      <div class="eyebrow"><span class="dot"></span>UK Fan Survey · n=244 public respondents</div>
+      <h1 class="title">Where do you stand vs <em>the public?</em></h1>
+      <p class="subhead">Answer <strong>13 quick questions</strong> about the 2026 FIFA World Cup — your excitement, viewing plans, brand attitudes and predictions. Then we'll reveal exactly how your answers stack up against the UK general public surveyed for this study.</p>
+      <div class="kickoff-stat">
+        <div class="ks"><b>244</b><span>Public respondents</span></div>
+        <div class="ks"><b>13</b><span>Questions</span></div>
+        <div class="ks"><b>~2 min</b><span>To complete</span></div>
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()">Kick off →</button>
+    </div>
+
+    <!-- QUESTIONS render here -->
+    <div id="quizArea"></div>
+
+    <!-- RESULTS -->
+    <div class="results" id="results"></div>
+
+  </div>
+</div>
+
+<script id="wc-data" type="application/json">
+{
+ "n": 244,
+ "q1": {
+  "labels": [
+   "Strongly Agree",
+   "Agree",
+   "Neither Agree nor Disagree",
+   "Disagree",
+   "Strongly Disagree"
+  ],
+  "pct": [
+   32.0,
+   28.3,
+   18.4,
+   9.0,
+   12.3
+  ]
+ },
+ "q2": {
+  "labels": [
+   "Much more excited than previous tournaments",
+   "Slightly more excited than previous tournaments",
+   "About the same as previous tournaments",
+   "Slightly less excited than previous tournaments",
+   "Much less excited than previous tournaments",
+   "This is the first World Cup I've followed"
+  ],
+  "pct": [
+   20.1,
+   16.8,
+   38.9,
+   9.0,
+   12.3,
+   2.9
+  ]
+ },
+ "q3": {
+  "labels": [
+   "Very likely",
+   "Fairly likely",
+   "Neither likely nor unlikely",
+   "Fairly unlikely",
+   "Very unlikely"
+  ],
+  "pct": [
+   39.3,
+   27.9,
+   13.1,
+   6.1,
+   13.5
+  ]
+ },
+ "q4": {
+  "labels": [
+   "The opening match",
+   "Group stage matches involving home nations",
+   "Group stage matches not involving home nations",
+   "Knockout rounds",
+   "Semi-finals",
+   "The final",
+   "None -- I don't expect to watch"
+  ],
+  "pct": [
+   41.0,
+   51.6,
+   29.1,
+   38.5,
+   45.1,
+   47.1,
+   20.1
+  ]
+ },
+ "q5": {
+  "labels": [
+   "At home on TV or streaming",
+   "At a friend or family member's home",
+   "In a pub or bar",
+   "At a fan zone or public screening",
+   "A mix of locations",
+   "I don't expect to watch"
+  ],
+  "pct": [
+   63.1,
+   19.7,
+   23.4,
+   6.1,
+   5.3,
+   18.9
+  ]
+ },
+ "q6": {
+  "labels": [
+   "I've seen their adverts during previews or coverage",
+   "I've seen their logo at matches or in stadiums",
+   "I've seen them on social media",
+   "I've seen content from players or creators featuring the brand",
+   "I remember them from previous tournaments",
+   "I've seen in-store promotions or World Cup branded packaging",
+   "I've seen outdoor advertising such as billboards or posters",
+   "Someone told me or I read about it",
+   "I don't associate any brands with the World Cup"
+  ],
+  "pct": [
+   33.6,
+   20.1,
+   25.0,
+   10.2,
+   10.7,
+   17.2,
+   10.2,
+   4.1,
+   34.8
+  ]
+ },
+ "q7": {
+  "labels": [
+   "Noticed a brand more than I normally would",
+   "Searched for more information about a brand online",
+   "Followed a brand on social media",
+   "Engaged with a brand's content - liked, shared, or commented",
+   "Entered a promotion or competition run by a brand",
+   "Talked about a brand with friends, family, or colleagues",
+   "Chosen a brand over a competitor because of its sports involvement",
+   "Bought a product from a brand for the first time because of a sports association",
+   "None of these"
+  ],
+  "pct": [
+   28.7,
+   14.8,
+   14.3,
+   16.0,
+   14.8,
+   12.3,
+   6.1,
+   4.9,
+   44.3
+  ]
+ },
+ "q8": {
+  "labels": [
+   "A discount or promotional offer",
+   "Exclusive limited edition packaging or product",
+   "A competition or prize draw",
+   "Knowing the brand supports grassroots football",
+   "Content or behind-the-scenes access",
+   "Nothing would change my behaviour"
+  ],
+  "pct": [
+   43.9,
+   21.7,
+   28.7,
+   13.5,
+   4.5,
+   31.1
+  ]
+ },
+ "q9": {
+  "labels": [
+   "Watching match highlights online or on social media",
+   "Following World Cup content on social media",
+   "Entering a sweepstake or prediction competition",
+   "Watching matches in a pub, bar, or fan zone",
+   "Watching matches with friends or family",
+   "Buying food, drink, or merchandise for a match occasion",
+   "Taking part in a workplace sweepstake or conversation",
+   "Buying a product because of a World Cup retail promotion",
+   "None of these"
+  ],
+  "pct": [
+   36.5,
+   28.7,
+   23.8,
+   24.6,
+   34.4,
+   23.0,
+   13.9,
+   11.5,
+   24.6
+  ]
+ },
+ "q11_all": {
+  "England": 19.67,
+  "Don't know": 16.8,
+  "Spain": 12.3,
+  "Brazil": 12.3,
+  "France": 11.48,
+  "Scotland": 6.97,
+  "Argentina": 4.1,
+  "Austria": 2.87,
+  "Portugal": 2.87,
+  "Belgium": 1.64,
+  "Algeria": 1.23,
+  "Germany": 1.23,
+  "Switzerland": 0.82,
+  "United States (host)": 0.82,
+  "Bosnia and Herzegovina": 0.82,
+  "Japan": 0.82,
+  "Iraq": 0.41,
+  "Croatia": 0.41,
+  "Senegal": 0.41,
+  "Australia": 0.41,
+  "Turkey": 0.41,
+  "Canada (host)": 0.41,
+  "New Zealand": 0.41,
+  "Ghana": 0.41
+ },
+ "q12_all": {
+  "France": 43.0,
+  "Brazil": 40.2,
+  "England": 37.7,
+  "Spain": 29.9,
+  "Germany": 29.5,
+  "Argentina": 25.0,
+  "Don't know": 17.2,
+  "Portugal": 14.3,
+  "United States (host)": 6.1,
+  "Croatia": 6.1,
+  "Scotland": 5.7,
+  "Algeria": 4.9,
+  "Belgium": 4.9,
+  "Canada (host)": 3.7,
+  "Mexico (host)": 3.3,
+  "Japan": 2.9,
+  "Morocco": 2.9,
+  "Netherlands": 2.9,
+  "Australia": 2.5,
+  "Austria": 2.5,
+  "Colombia": 2.5,
+  "Cape Verde": 2.0,
+  "Bosnia and Herzegovina": 1.6,
+  "Ghana": 1.6,
+  "New Zealand": 1.6,
+  "Uruguay": 1.6,
+  "Egypt": 1.2,
+  "Iraq": 0.8,
+  "Norway": 0.8,
+  "South Korea": 0.8,
+  "Switzerland": 0.8,
+  "Uzbekistan": 0.8,
+  "Curacao": 0.4,
+  "Czechia": 0.4,
+  "Iran": 0.4,
+  "Ivory Coast": 0.4,
+  "Panama": 0.4,
+  "Paraguay": 0.4,
+  "Qatar": 0.4,
+  "Saudi Arabia": 0.4,
+  "Senegal": 0.4,
+  "South Africa": 0.4,
+  "Tunisia": 0.4,
+  "Turkey": 0.4
+ },
+ "q13_all": {
+  "England": 50.8,
+  "Scotland": 18.9,
+  "Don't know": 13.1,
+  "Brazil": 2.9,
+  "Algeria": 1.2,
+  "Spain": 1.2,
+  "Austria": 1.2,
+  "Argentina": 1.2,
+  "Belgium": 0.8,
+  "Ghana": 0.8,
+  "Japan": 0.8,
+  "Australia": 0.8,
+  "Germany": 0.8,
+  "Iraq": 0.4,
+  "Croatia": 0.4,
+  "France": 0.4,
+  "Morocco": 0.4,
+  "Mexico (host)": 0.4,
+  "Portugal": 0.4,
+  "Switzerland": 0.4,
+  "Turkey": 0.4,
+  "United States (host)": 0.4,
+  "Senegal": 0.4,
+  "New Zealand": 0.4
+ },
+ "q14": {
+  "labels": [
+   "Group stage exit",
+   "Round of 32",
+   "Round of 16",
+   "Quarter-finals",
+   "Semi-finals",
+   "Runners-up",
+   "Winners"
+  ],
+  "pct": [
+   6.6,
+   11.9,
+   9.0,
+   19.3,
+   17.6,
+   5.3,
+   17.2
+  ]
+ },
+ "countries": [
+  "Algeria",
+  "Argentina",
+  "Australia",
+  "Austria",
+  "Belgium",
+  "Bosnia and Herzegovina",
+  "Brazil",
+  "Canada (host)",
+  "Cape Verde",
+  "Colombia",
+  "Croatia",
+  "Curacao",
+  "Czechia",
+  "DR Congo",
+  "Ecuador",
+  "Egypt",
+  "England",
+  "France",
+  "Germany",
+  "Ghana",
+  "Haiti",
+  "Iran",
+  "Iraq",
+  "Ivory Coast",
+  "Japan",
+  "Jordan",
+  "Mexico (host)",
+  "Morocco",
+  "Netherlands",
+  "New Zealand",
+  "Norway",
+  "Panama",
+  "Paraguay",
+  "Portugal",
+  "Qatar",
+  "Saudi Arabia",
+  "Scotland",
+  "Senegal",
+  "South Africa",
+  "South Korea",
+  "Spain",
+  "Sweden",
+  "Switzerland",
+  "Tunisia",
+  "Turkey",
+  "United States (host)",
+  "Uruguay",
+  "Uzbekistan",
+  "Don't know"
+ ]
+}
+</script>
+
+<script>
+const DATA = JSON.parse(document.getElementById('wc-data').textContent);
+
+const QUESTIONS = [
+  { key:'q1',  type:'single',       kicker:'Question 1 of 13',  title:'I am excited about the 2026 World Cup',                    sub:'How much do you agree with that statement?' },
+  { key:'q2',  type:'single',       kicker:'Question 2 of 13',  title:'Compared to previous World Cups...',                       sub:'How does your excitement this time compare?' },
+  { key:'q3',  type:'single',       kicker:'Question 3 of 13',  title:'How likely are you to watch any of the tournament?',       sub:'Pick the option closest to how you feel.' },
+  { key:'q4',  type:'multi',        kicker:'Question 4 of 13',  title:'Which matches do you expect to watch?',                    sub:'Select all that apply.' },
+  { key:'q5',  type:'multi',        kicker:'Question 5 of 13',  title:'Where do you expect to watch matches?',                   sub:'Select all that apply.' },
+  { key:'q6',  type:'multi',        kicker:'Question 6 of 13',  title:'How have you come across brands associated with the World Cup?', sub:'Select all that apply.' },
+  { key:'q7',  type:'multi',        kicker:'Question 7 of 13',  title:'What have you done because of a brand\'s involvement in sport?', sub:'Select all that apply.' },
+  { key:'q8',  type:'multi',        kicker:'Question 8 of 13',  title:'What would make you more likely to buy from a World Cup sponsor?', sub:'Select all that apply.' },
+  { key:'q9',  type:'multi',        kicker:'Question 9 of 13',  title:'What will you do as part of following the World Cup?',     sub:'Select all that apply.' },
+  { key:'q11', type:'country',      kicker:'Question 10 of 13', title:'Who do you think will win the World Cup?',                 sub:'Search or pick a nation.' },
+  { key:'q12', type:'country-multi',kicker:'Question 11 of 13', title:'Which nations will reach the semi-finals?',               sub:'Pick up to 4 nations you think will make it.' },
+  { key:'q13', type:'country',      kicker:'Question 12 of 13', title:'Which nation will you be supporting?',                    sub:'Search or pick your team.' },
+  { key:'q14', type:'single',       kicker:'Question 13 of 13', title:'How far will the nation you support get?',                sub:'Be honest — not just hopeful.' },
+];
+
+let step = -1; // -1 = intro
+const answers = {};
+let _card = {};
+
+function startQuiz(){
+  document.getElementById('intro').style.display = 'none';
+  step = 0;
+  renderQuestion();
+}
+
+function updateProgress(){
+  const pct = step < 0 ? 0 : Math.round(((step) / QUESTIONS.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  const clock = document.getElementById('sbClock');
+  if(step < 0){ clock.innerHTML = '<b>KICK-OFF</b>'; }
+  else if(step >= QUESTIONS.length){ clock.innerHTML = '<b>FULL TIME</b>'; }
+  else { clock.innerHTML = `<b>${step+1}'</b> / ${QUESTIONS.length}'`; }
+}
+
+function renderQuestion(){
+  updateProgress();
+  const area = document.getElementById('quizArea');
+  const q = QUESTIONS[step];
+  const d = DATA[q.key];
+
+  let optionsHtml = '';
+
+  if(q.type === 'single'){
+    optionsHtml = '<div class="options">' + d.labels.map((lab,i)=>{
+      const sel = answers[q.key] === i ? 'selected' : '';
+      return `<button class="opt ${sel}" onclick="selectSingle('${q.key}', ${i})">
+        <span class="num">${i+1}</span><span class="opt-label">${lab}</span>
+      </button>`;
+    }).join('') + '</div>';
+  }
+
+  if(q.type === 'multi'){
+    optionsHtml = '<p class="hint">Tap as many as apply, then continue.</p><div class="options">' + d.labels.map((lab,i)=>{
+      const arr = answers[q.key] || [];
+      const sel = arr.includes(i) ? 'selected' : '';
+      return `<button class="opt ${sel}" onclick="selectMulti('${q.key}', ${i})">
+        <span class="opt-label">${lab}</span><span class="opt-check"></span>
+      </button>`;
+    }).join('') + '</div>';
+  }
+
+  if(q.type === 'country'){
+    const list = DATA.countries;
+    optionsHtml = `
+      <input class="country-search" id="countrySearch" placeholder="Search nations..." oninput="filterCountries()">
+      <div class="country-grid" id="countryGrid">
+        ${list.map(c=>{
+          const sel = answers[q.key] === c ? 'selected' : '';
+          return `<button class="c-chip ${sel}" data-name="${c.toLowerCase()}" onclick="selectCountry('${q.key}', '${c.replace(/'/g,"\\'")}')">${c}</button>`;
+        }).join('')}
+      </div>`;
+  }
+
+  if(q.type === 'country-multi'){
+    const list = DATA.countries.filter(c => c !== "Don't know");
+    optionsHtml = `
+      <p class="hint">Select the nations you think will make it to the semi-finals (4 spots).</p>
+      <input class="country-search" id="countrySearch" placeholder="Search nations..." oninput="filterCountries()">
+      <div class="country-grid" id="countryGrid">
+        ${list.map(c=>{
+          const arr = answers[q.key] || [];
+          const sel = arr.includes(c) ? 'selected' : '';
+          return `<button class="c-chip ${sel}" data-name="${c.toLowerCase()}" onclick="selectCountryMulti('${c.replace(/'/g,"\\'")}')">${c}</button>`;
+        }).join('')}
+      </div>`;
+  }
+
+  // Build inline comparison if the question has been answered
+  let compHtml = '';
+  if(q.type === 'single' && answers[q.key] !== undefined){
+    compHtml = buildInlineComp(q.key, [answers[q.key]]);
+  } else if(q.type === 'multi' && (answers[q.key]||[]).length > 0){
+    compHtml = buildInlineComp(q.key, answers[q.key]);
+  } else if(q.type === 'country' && answers[q.key]){
+    const lookup = q.key === 'q11' ? DATA.q11_all : DATA.q13_all;
+    compHtml = buildInlineCountryComp(lookup, answers[q.key], 6);
+  } else if(q.type === 'country-multi' && (answers[q.key]||[]).length > 0){
+    compHtml = buildInlineCountryComp(DATA.q12_all, answers[q.key]||[], 8);
+  }
+
+  area.innerHTML = `
+    <div class="q-screen active">
+      <div class="q-kicker">${q.kicker}</div>
+      <h2 class="q-title">${q.title}</h2>
+      <p class="q-sub">${q.sub}</p>
+      ${optionsHtml}
+      ${compHtml}
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="prevQuestion()" ${step===0 ? 'style="visibility:hidden"' : ''}>← Back</button>
+        <div class="right">
+          <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">${step === QUESTIONS.length-1 ? 'See results →' : 'Next →'}</button>
+        </div>
+      </div>
+    </div>`;
+
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{
+      document.querySelectorAll('.ic-fill[data-w]').forEach(el=>{
+        el.style.width = el.dataset.w + '%';
+      });
+    }, 30);
+  });
+  refreshNextButton();
+}
+
+function selectSingle(key, idx){
+  answers[key] = idx;
+  renderQuestion();
+}
+
+function selectMulti(key, idx){
+  const arr = answers[key] || [];
+  const pos = arr.indexOf(idx);
+  if(pos === -1) arr.push(idx); else arr.splice(pos,1);
+  answers[key] = arr;
+  renderQuestion();
+}
+
+function selectCountry(key, name){
+  answers[key] = name;
+  renderQuestion();
+}
+
+function selectCountryMulti(name){
+  const arr = answers['q12'] || [];
+  const pos = arr.indexOf(name);
+  if(pos === -1) arr.push(name); else arr.splice(pos,1);
+  answers['q12'] = arr;
+  renderQuestion();
+}
+
+function filterCountries(){
+  const v = document.getElementById('countrySearch').value.toLowerCase();
+  document.querySelectorAll('#countryGrid .c-chip').forEach(chip=>{
+    chip.style.display = chip.dataset.name.includes(v) ? '' : 'none';
+  });
+}
+
+function refreshNextButton(){
+  const q = QUESTIONS[step];
+  const btn = document.getElementById('nextBtn');
+  if(!btn) return;
+  let ok = true;
+  if(q.type === 'single') ok = answers[q.key] !== undefined;
+  if(q.type === 'multi') ok = (answers[q.key] || []).length > 0;
+  if(q.type === 'country') ok = answers[q.key] !== undefined;
+  if(q.type === 'country-multi') ok = (answers[q.key] || []).length > 0;
+  btn.disabled = !ok;
+}
+
+function prevQuestion(){
+  if(step > 0){ step--; renderQuestion(); }
+}
+
+function nextQuestion(){
+  const q = QUESTIONS[step];
+  let ok = true;
+  if(q.type === 'single') ok = answers[q.key] !== undefined;
+  if(q.type === 'multi') ok = (answers[q.key] || []).length > 0;
+  if(q.type === 'country') ok = answers[q.key] !== undefined;
+  if(q.type === 'country-multi') ok = (answers[q.key] || []).length > 0;
+  if(!ok) return;
+
+  if(step < QUESTIONS.length - 1){
+    step++;
+    renderQuestion();
+  } else {
+    step = QUESTIONS.length;
+    document.getElementById('quizArea').innerHTML = '';
+    updateProgress();
+    showResults();
+  }
+}
+
+function fmtPct(v){ return v.toFixed(1) + '%'; }
+
+function buildInlineComp(qkey, userIndices){
+  const d = DATA[qkey];
+  const maxPct = Math.max(...d.pct);
+  let rows = '';
+  d.labels.forEach((lab, i)=>{
+    const mine = userIndices.includes(i);
+    const isTop = d.pct[i] === maxPct;
+    rows += `<div class="ic-row${mine?' mine':''}">
+      <div class="ic-lbl-row">
+        <span class="ic-lab">${mine?'★ ':''}${lab}${isTop?' <span class="pop-badge">public\'s top</span>':''}</span>
+        <span class="ic-val">${fmtPct(d.pct[i])}</span>
+      </div>
+      <div class="ic-track"><div class="ic-fill" data-w="${d.pct[i]}"></div></div>
+    </div>`;
+  });
+  return `<div class="inline-comp">
+    <div class="ic-eyebrow">How the public answered</div>
+    ${rows}
+  </div>`;
+}
+
+function buildInlineCountryComp(lookup, userPicks, topN){
+  const sorted = Object.entries(lookup).sort((a,b)=>b[1]-a[1]);
+  const top = sorted.slice(0,topN).map(e=>e[0]);
+  const picks = Array.isArray(userPicks) ? userPicks : (userPicks ? [userPicks] : []);
+  let labels = [...top];
+  picks.forEach(c=>{
+    if(c && !labels.some(x=>x.toLowerCase()===c.toLowerCase())) labels.push(c);
+  });
+  const maxPct = sorted[0][1];
+  let rows = '';
+  labels.forEach(c=>{
+    const pct = lookup[c] || 0;
+    const mine = picks.some(x=>x.toLowerCase()===c.toLowerCase());
+    const isTop = pct === maxPct;
+    rows += `<div class="ic-row${mine?' mine':''}">
+      <div class="ic-lbl-row">
+        <span class="ic-lab">${mine?'★ ':''}${c}${isTop?' <span class="pop-badge">public\'s top</span>':''}</span>
+        <span class="ic-val">${fmtPct(pct)}</span>
+      </div>
+      <div class="ic-track"><div class="ic-fill" data-w="${pct}"></div></div>
+    </div>`;
+  });
+  return `<div class="inline-comp">
+    <div class="ic-eyebrow">How the public answered</div>
+    ${rows}
+  </div>`;
+}
+
+function buildBarBlock(qkey, title, note, userIndices){
+  const d = DATA[qkey];
+  const maxPct = Math.max(...d.pct);
+  const userMatchedTop = userIndices.some(i => d.pct[i] === maxPct);
+  let rows = '';
+  d.labels.forEach((lab, i)=>{
+    const mine = userIndices.includes(i);
+    const isTop = d.pct[i] === maxPct;
+    rows += `
+      <div class="bar-row ${mine ? 'mine' : ''}">
+        <div class="bar-label">
+          <span class="lab">${mine ? '★ ' : ''}${lab}${isTop ? ' <span class="pop-badge">public\'s top</span>' : ''}</span>
+          <span class="val">${fmtPct(d.pct[i])} of public</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" data-w="${d.pct[i]}"></div></div>
+      </div>`;
+  });
+  const matchNote = userMatchedTop ? '<div class="match-note">You matched the crowd\'s top pick</div>' : '';
+  return `<div class="res-block">
+      <h3 class="res-q">${title}</h3>
+      <p class="res-q-note">${note}</p>
+      ${matchNote}
+      ${rows}
+    </div>`;
+}
+
+function buildCountryBlock(lookup, title, note, userPicks, topN){
+  const sorted = Object.entries(lookup).sort((a,b)=>b[1]-a[1]);
+  const top = sorted.slice(0,topN).map(e=>e[0]);
+  let labels = top.slice();
+  const picks = Array.isArray(userPicks) ? userPicks : (userPicks ? [userPicks] : []);
+  picks.forEach(c=>{
+    if(c && !labels.some(x=>x.toLowerCase()===c.toLowerCase())) labels.push(c);
+  });
+  const topPct = sorted[0][1];
+  const topCountry = sorted[0][0];
+  const userMatchedTop = picks.some(x=>x.toLowerCase()===topCountry.toLowerCase());
+  let rows = '';
+  labels.forEach(c=>{
+    const pct = lookup[c] || 0;
+    const mine = picks.some(x=>x.toLowerCase()===c.toLowerCase());
+    const isTop = pct === topPct;
+    rows += `
+      <div class="bar-row ${mine ? 'mine' : ''}">
+        <div class="bar-label"><span class="lab">${mine ? '★ ' : ''}${c}${isTop ? ' <span class="pop-badge">public\'s top</span>' : ''}</span><span class="val">${fmtPct(pct)} of public</span></div>
+        <div class="bar-track"><div class="bar-fill" data-w="${pct}"></div></div>
+      </div>`;
+  });
+  const matchNote = userMatchedTop ? '<div class="match-note">You matched the crowd\'s top pick</div>' : '';
+  return `<div class="res-block">
+      <h3 class="res-q">${title}</h3>
+      <p class="res-q-note">${note}</p>
+      ${matchNote}
+      ${rows}
+    </div>`;
+}
+
+function computePersona(){
+  const q1 = answers.q1, q2 = answers.q2, q3 = answers.q3, q14 = answers.q14;
+  const q4 = answers.q4 || [], q5 = answers.q5 || [], q9 = answers.q9 || [];
+  const supportedTeam = answers.q13 || answers.q11;
+  const predictedWinner = answers.q11;
+
+  // --- Enthusiasm: 0–10 ---
+  const q2Bonus = (q2 === 0 || q2 === 1) ? 2 : (q2 === 2 ? 1 : (q2 === 5 ? 1 : 0));
+  const enthusiasm = (4 - q1) + (4 - q3) + q2Bonus;
+
+  // --- Engagement breadth ---
+  const engagement =
+    q4.filter(i => i !== 6).length +
+    q5.filter(i => i !== 5).length +
+    q9.filter(i => i !== 8).length;
+
+  // --- Social orientation ---
+  const socialIdx = [1,2,3,4];
+  const socialScore = q5.filter(i => socialIdx.includes(i)).length;
+  const homeOnly = q5.length === 1 && q5[0] === 0;
+
+  // --- Prediction confidence ---
+  const predictionConfident = predictedWinner && predictedWinner.toLowerCase() !== "don't know";
+  const boldPrediction = q14 >= 4;
+
+  // --- Big-match-only viewing pattern ---
+  const groupStageIdx = [0,1,2,3];
+  const bigMatchOnly = q4.length > 0 &&
+    q4.every(i => i === 4 || i === 5) &&
+    !q4.some(i => groupStageIdx.includes(i));
+
+  const q1Label = DATA.q1.labels[q1].toLowerCase();
+  const teamName = supportedTeam || 'a nation';
+  const q14Label = DATA.q14.labels[q14].toLowerCase();
+
+  let persona;
+
+  if (q2 === 5){
+    persona = {
+      name: 'The New Recruit',
+      tagline: 'Welcome to the show',
+      blurb: `This is the first World Cup you've ever followed — and you're jumping in with both feet, rating yourself <strong>"${q1Label}"</strong> on excitement. You're backing <strong>${teamName}</strong> to reach the <strong>${q14Label}</strong>. No baggage from past tournaments, just fresh enthusiasm.`,
+      tags: ['First tournament', 'Open-minded', `Backing ${teamName}`]
+    };
+  } else if (enthusiasm <= 3 && engagement <= 2){
+    persona = {
+      name: 'The Reluctant Spectator',
+      tagline: 'Watching from a distance',
+      blurb: `Football fandom isn't really your thing this tournament — you're <strong>"${q1Label}"</strong> on the excitement question and you're not planning to do much beyond the bare minimum. If the World Cup happens near you, you might catch a moment of it, but you won't be rearranging your life around it.`,
+      tags: ['Low engagement', 'Taking it or leaving it']
+    };
+  } else if (enthusiasm >= 7 && engagement >= 6 && socialScore >= 1){
+    persona = {
+      name: 'The Diehard Devotee',
+      tagline: 'All in, every match',
+      blurb: `You're "${q1Label}" on excitement, you're watching across multiple match types and occasions, and you're not doing it alone — friends, pubs or fan zones are part of the plan. You've got <strong>${teamName}</strong> going all the way to the <strong>${q14Label}</strong>. This tournament is a genuine event for you, not background noise.`,
+      tags: ['High engagement', 'Social viewer', `Backing ${teamName}`]
+    };
+  } else if (enthusiasm >= 6 && homeOnly && predictionConfident){
+    persona = {
+      name: 'The Armchair Analyst',
+      tagline: 'Stats, screens, and certainty',
+      blurb: `You're genuinely into this tournament — "${q1Label}" on excitement — but you're keeping it strictly to your own sofa, on your own screen. You've got a confident call in for <strong>${teamName}</strong> to reach the <strong>${q14Label}</strong>. You don't need a crowd to enjoy the football; you need a good view of the TV.`,
+      tags: ['Home viewer', 'Confident predictor', `Backing ${teamName}`]
+    };
+  } else if (socialScore >= 2){
+    persona = {
+      name: 'The Social Fan',
+      tagline: "It's about who's watching with you",
+      blurb: `You're showing up across several different social settings to watch — friends, pubs, fan zones, you're not picky about where, as long as people are around. Football is your excuse, but the occasion is the real draw. You've still got <strong>${teamName}</strong> in mind for the <strong>${q14Label}</strong>, but the matchday itself matters as much as the result.`,
+      tags: ['Multi-venue viewer', 'Occasion-driven']
+    };
+  } else if (bigMatchOnly){
+    persona = {
+      name: 'The Big-Match Bandwagoner',
+      tagline: 'Saves energy for the big occasions',
+      blurb: `You're skipping the group stage grind and saving your attention for when it actually matters — semis and the final are where you'll show up. It's a measured approach: "${q1Label}" on excitement, with effort reserved for the moments that count. You're backing <strong>${teamName}</strong> to make the <strong>${q14Label}</strong>.`,
+      tags: ['Knockout-stage only', 'Selective viewer']
+    };
+  } else {
+    persona = {
+      name: 'The Casual Follower',
+      tagline: 'Dipping in and out',
+      blurb: `You'll catch some of the World Cup, in your own way and on your own terms — not glued to every match, but not ignoring it either. You're "${q1Label}" on excitement and have <strong>${teamName}</strong> pegged for the <strong>${q14Label}</strong>. A comfortable middle ground between superfan and bystander.`,
+      tags: ['Moderate engagement', 'Flexible viewer']
+    };
+  }
+
+  return persona;
+}
+
+function downloadPersonaCard(){
+  const { persona, matches, totalScored } = _card;
+  const W = 1080, H = 1080;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // roundRect polyfill
+  if(!ctx.roundRect){
+    CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+      r = Math.min(r, w/2, h/2);
+      this.beginPath();
+      this.moveTo(x+r,y); this.lineTo(x+w-r,y);
+      this.quadraticCurveTo(x+w,y,x+w,y+r); this.lineTo(x+w,y+h-r);
+      this.quadraticCurveTo(x+w,y+h,x+w-r,y+h); this.lineTo(x+r,y+h);
+      this.quadraticCurveTo(x,y+h,x,y+h-r); this.lineTo(x,y+r);
+      this.quadraticCurveTo(x,y,x+r,y); this.closePath();
+    };
+  }
+
+  const draw = () => {
+    const chalk='#f1f4ec', gold='#d6006c', goldBright='#ff5cae', amber='#ff3d93', muted='#a8b3a6';
+    const PAD = 80;
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#0e3320'); bg.addColorStop(0.85,'#072017');
+    ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+    // Top radial glow
+    const rg = ctx.createRadialGradient(W/2,-100,0,W/2,-100,620);
+    rg.addColorStop(0,'rgba(255,255,255,0.07)'); rg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle = rg; ctx.fillRect(0,0,W,H);
+
+    // Bottom-left gold glow
+    const rg2 = ctx.createRadialGradient(160,H+80,0,160,H+80,800);
+    rg2.addColorStop(0,'rgba(214,0,108,0.12)'); rg2.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle = rg2; ctx.fillRect(0,0,W,H);
+
+    // Diagonal stripe texture
+    ctx.save(); ctx.globalAlpha = 0.018; ctx.strokeStyle='#ffffff'; ctx.lineWidth=50;
+    for(let i=-3;i<18;i++){
+      ctx.beginPath();
+      ctx.moveTo(i*120, H+50); ctx.lineTo(i*120 + H*0.85, -50);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Decorative circles top-right
+    ctx.save(); ctx.strokeStyle='rgba(243,239,225,0.07)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(W+40,-40,280,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(W+40,-40,160,0,Math.PI*2); ctx.stroke();
+    ctx.restore();
+
+    // ── Brand bar ──
+    ctx.save();
+    ctx.fillStyle=amber; ctx.shadowColor=amber; ctx.shadowBlur=14;
+    ctx.beginPath(); ctx.arc(PAD,72,5,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    ctx.font='400 24px "Rework Headline","Archivo Black",sans-serif'; ctx.fillStyle=goldBright;
+    ctx.fillText('FAN PULSE  ·  WC26', PAD+20, 80);
+
+    ctx.strokeStyle='rgba(243,239,225,0.12)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(PAD,106); ctx.lineTo(W-PAD,106); ctx.stroke();
+
+    // ── Eyebrow ──
+    ctx.font='400 17px ui-monospace,monospace'; ctx.fillStyle=gold;
+    ctx.fillText('YOUR FAN PROFILE', PAD, 162);
+    ctx.strokeStyle=gold; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(PAD,173); ctx.lineTo(PAD+228,173); ctx.stroke();
+
+    // ── Persona name (with wrapping) ──
+    function wrapText(text, x, y, maxW, fontSize){
+      ctx.font=`400 ${fontSize}px "Rework Headline","Archivo Black",sans-serif`; ctx.fillStyle=chalk;
+      const lineH = fontSize * 1.1;
+      const words = text.split(' ');
+      let line='', curY=y;
+      words.forEach((word,n)=>{
+        const test = line+word+' ';
+        if(ctx.measureText(test).width > maxW && n > 0){
+          ctx.fillText(line.trim(), x, curY); line=word+' '; curY+=lineH;
+        } else { line=test; }
+      });
+      ctx.fillText(line.trim(), x, curY);
+      return curY;
+    }
+    const name = persona.name.toUpperCase();
+    const nameFontSize = name.length > 22 ? 78 : name.length > 16 ? 96 : name.length > 10 ? 108 : 118;
+    const lastNameY = wrapText(name, PAD, 268, W-PAD*2, nameFontSize);
+
+    // ── Tagline ──
+    ctx.font='italic 600 31px "Rework Text",Archivo,sans-serif'; ctx.fillStyle=goldBright;
+    const taglineY = lastNameY + 54;
+    ctx.fillText(`"${persona.tagline}"`, PAD, taglineY);
+
+    // ── Blurb (strip HTML, wrap text) ──
+    function drawParagraph(text, x, y, maxW, fontSize, lineH, color){
+      ctx.font=`400 ${fontSize}px "Rework Text",Archivo,sans-serif`; ctx.fillStyle=color;
+      const words=text.split(' '); let line='', curY=y;
+      words.forEach((word,n)=>{
+        const test=line+word+' ';
+        if(ctx.measureText(test).width>maxW && n>0){
+          ctx.fillText(line.trim(),x,curY); line=word+' '; curY+=lineH;
+        } else { line=test; }
+      });
+      ctx.fillText(line.trim(),x,curY); return curY;
+    }
+    const plainBlurb = persona.blurb.replace(/<[^>]+>/g,'');
+    const blurbEndY = drawParagraph(plainBlurb, PAD, taglineY+46, W-PAD*2, 17, 26, muted);
+
+    // ── Divider ──
+    ctx.strokeStyle='rgba(243,239,225,0.1)'; ctx.lineWidth=1;
+    const div1Y = blurbEndY+28;
+    ctx.beginPath(); ctx.moveTo(PAD,div1Y); ctx.lineTo(W-PAD,div1Y); ctx.stroke();
+
+    // ── Tags ──
+    ctx.font='400 16px ui-monospace,monospace';
+    const tagH=38, tagPadX=16, tagFontSize=16;
+    let tx=PAD, ty=div1Y+44;
+    persona.tags.forEach(tag=>{
+      const pillW = ctx.measureText(tag).width + tagPadX*2;
+      if(tx+pillW > W-PAD && tx > PAD){ tx=PAD; ty+=tagH+12; }
+      ctx.fillStyle='rgba(255,255,255,0.04)';
+      ctx.strokeStyle='rgba(243,239,225,0.22)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.roundRect(tx, ty-tagFontSize-8, pillW, tagH, tagH/2);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle=chalk; ctx.fillText(tag, tx+tagPadX, ty+2);
+      tx += pillW+12;
+    });
+    const afterTagsY = ty + tagH + 8;
+
+    // ── Crowd Sync block ──
+    const scoreY = Math.max(afterTagsY+36, H-360);
+    const scoreH = 124;
+    const scoreGrad = ctx.createLinearGradient(PAD,0,W-PAD,0);
+    scoreGrad.addColorStop(0,'rgba(214,0,108,0.14)'); scoreGrad.addColorStop(1,'rgba(255,255,255,0.02)');
+    ctx.fillStyle=scoreGrad; ctx.strokeStyle='rgba(214,0,108,0.32)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.roundRect(PAD, scoreY, W-PAD*2, scoreH, 12); ctx.fill(); ctx.stroke();
+
+    ctx.font='400 68px "Rework Headline","Archivo Black",sans-serif'; ctx.fillStyle=goldBright;
+    ctx.fillText(`${matches}/${totalScored}`, PAD+26, scoreY+85);
+    ctx.font='700 19px "Rework Text",Archivo,sans-serif'; ctx.fillStyle=chalk;
+    ctx.fillText('CROWD SYNC SCORE', PAD+148, scoreY+42);
+    ctx.font='400 15px "Rework Text",Archivo,sans-serif'; ctx.fillStyle=muted;
+    ctx.fillText('Times your answer matched the public\'s most popular pick', PAD+148, scoreY+68);
+    ctx.fillText(`${matches} out of ${totalScored} scaled & prediction questions`, PAD+148, scoreY+92);
+
+    // ── Footer ──
+    const ftY = H-108;
+    ctx.strokeStyle='rgba(243,239,225,0.1)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(PAD,ftY); ctx.lineTo(W-PAD,ftY); ctx.stroke();
+    ctx.font='600 21px "Rework Text",Archivo,sans-serif'; ctx.fillStyle=chalk;
+    ctx.fillText('How do you compare?', PAD, ftY+38);
+    ctx.font='400 17px "Rework Text",Archivo,sans-serif'; ctx.fillStyle=muted;
+    ctx.fillText('2026 World Cup Fan Pulse  ·  n=244 UK general public respondents', PAD, ftY+66);
+
+    // ── Download ──
+    canvas.toBlob(blob=>{
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href=url; a.download=`fan-pulse-${persona.name.toLowerCase().replace(/\s+/g,'-')}.png`;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a); URL.revokeObjectURL(url);
+    });
+  };
+
+  document.fonts.ready.then(draw);
+}
+
+function showResults(){
+  const r = document.getElementById('results');
+  const persona = computePersona();
+
+  // Crowd Sync Score — single-choice questions
+  const singleKeys = ['q1','q2','q3','q14'];
+  let matches = 0;
+  singleKeys.forEach(k=>{
+    const d = DATA[k];
+    const topIdx = d.pct.indexOf(Math.max(...d.pct));
+    if(answers[k] === topIdx) matches++;
+  });
+  // q11: predicted winner
+  const q11sorted = Object.entries(DATA.q11_all).sort((a,b)=>b[1]-a[1]);
+  const topWinner = q11sorted[0][0];
+  if(answers.q11 && answers.q11.toLowerCase() === topWinner.toLowerCase()) matches++;
+  // q13: supported nation
+  const q13sorted = Object.entries(DATA.q13_all).sort((a,b)=>b[1]-a[1]);
+  const topSupport = q13sorted[0][0];
+  if(answers.q13 && answers.q13.toLowerCase() === topSupport.toLowerCase()) matches++;
+  const totalScored = singleKeys.length + 2; // 6 total
+  _card = { persona, matches, totalScored };
+
+  const q1pct = DATA.q1.pct[answers.q1];
+  const q1label = DATA.q1.labels[answers.q1];
+
+  let html = `
+    <div class="res-header">
+      <div class="eyebrow">Full time</div>
+      <h2 class="res-title">Your <em>Fan Pulse</em> report</h2>
+      <p class="lede" style="margin-bottom:0;">Here's how your 13 answers compare against ${DATA.n} members of the UK public surveyed about the 2026 World Cup.</p>
+    </div>
+
+    <div class="persona-card">
+      <div class="persona-eyebrow">Your fan profile</div>
+      <h3 class="persona-name">${persona.name}</h3>
+      <p class="persona-tagline">${persona.tagline}</p>
+      <p class="persona-blurb">${persona.blurb}</p>
+      <div class="persona-tags">${persona.tags.map(t=>`<span class="p-tag">${t}</span>`).join('')}</div>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(243,239,225,0.1);">
+        <button class="btn btn-ghost" style="width:100%;font-size:13.5px;padding:12px 20px;" onclick="downloadPersonaCard()">↓ Download share card</button>
+      </div>
+    </div>
+
+    <div class="scoreline">
+      <div class="big">${matches}/${totalScored}</div>
+      <div class="desc">
+        <strong>Crowd Sync Score</strong> — the number of times your pick matched the public's most popular answer across the scaled &amp; prediction questions.<br>
+        On excitement, <strong>${fmtPct(q1pct)}</strong> of the public picked the same answer as you (<strong>${q1label}</strong>).
+      </div>
+    </div>
+  `;
+
+  // Q1–Q5: viewing questions
+  html += buildBarBlock('q1', 'Excited about the 2026 World Cup', 'Agreement with the statement — your pick marked with ★.', [answers.q1]);
+  html += buildBarBlock('q2', 'Excitement vs previous tournaments', 'How this year compares to past World Cups.', [answers.q2]);
+  html += buildBarBlock('q3', 'Likelihood to watch the tournament', 'Self-reported intent to watch.', [answers.q3]);
+  html += buildBarBlock('q4', 'Matches expected to watch', 'Multiple selections allowed — % who picked each.', answers.q4 || []);
+  html += buildBarBlock('q5', 'Where matches will be watched', 'Multiple selections allowed — % who picked each.', answers.q5 || []);
+
+  // Q6–Q8: brand questions
+  html += buildBarBlock('q6', 'How you came across World Cup brands', 'Multiple selections allowed — % who picked each.', answers.q6 || []);
+  html += buildBarBlock('q7', 'Actions taken because of a brand\'s sport involvement', 'Multiple selections allowed — % who picked each.', answers.q7 || []);
+  html += buildBarBlock('q8', 'What would make you buy from a World Cup sponsor', 'Multiple selections allowed — % who picked each.', answers.q8 || []);
+
+  // Q9: engagement activities
+  html += buildBarBlock('q9', 'World Cup activities & engagement', 'Multiple selections allowed — % who picked each.', answers.q9 || []);
+
+  // Q11: predicted winner
+  html += buildCountryBlock(DATA.q11_all, 'Predicted World Cup winner', 'Top public picks, plus yours if not shown. Your pick marked with ★.', answers.q11, 8);
+
+  // Q12: semi-final picks
+  html += buildCountryBlock(DATA.q12_all, 'Nations expected to reach the semi-finals', 'Top public picks — % who selected each nation. Your picks marked with ★.', answers.q12 || [], 10);
+
+  // Q13: supported nation
+  html += buildCountryBlock(DATA.q13_all, 'Nation you\'re supporting', '% of public backing each nation. Your pick marked with ★.', answers.q13, 8);
+
+  // Q14: how far supported team goes
+  html += buildBarBlock('q14', 'How far your supported team will go', 'Distribution of public predictions.', [answers.q14]);
+
+  html += `
+    <div class="restart-row"><button class="btn btn-ghost" onclick="location.reload()">↺ Start over</button></div>
+    <div class="footer-note">Comparison data drawn only from the survey's general public sample (n=${DATA.n}).</div>
+  `;
+
+  r.innerHTML = html;
+  r.classList.add('active');
+
+  // animate bars in
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{
+      document.querySelectorAll('.bar-fill').forEach(el=>{
+        el.style.width = el.dataset.w + '%';
+      });
+    }, 60);
+  });
+}
+
+updateProgress();
+</script>
+
+</body>
+</html>
