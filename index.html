@@ -35,16 +35,13 @@ body{
   padding:0 16px;min-height:58px;
 }
 .brand{
-  display:flex;align-items:center;gap:10px;padding:0 22px 0 4px;margin-right:6px;
+  display:flex;align-items:center;gap:18px;padding:0 22px 0 4px;margin-right:6px;
   border-right:1px solid var(--card-edge);flex:none;
 }
-.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--magenta);box-shadow:0 0 12px var(--magenta)}
-.brand .wm{
-  font-family:"Rework Headline","Archivo Black",system-ui,sans-serif;font-weight:700;
-  font-size:13px;letter-spacing:.04em;line-height:1.05;text-transform:uppercase;
-}
-.brand .wm span{display:block;font-family:inherit;font-weight:400;font-size:9.5px;
-  letter-spacing:.22em;color:var(--cream);opacity:.85;margin-top:2px}
+.brand a{display:inline-flex;align-items:center;border-bottom:0;line-height:0}
+.brand img{width:auto;opacity:.95;display:block}
+.brand img.potentia{height:24px}
+.brand img.vott{height:34px}
 
 .tabs{display:flex;align-items:stretch;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1}
 .tabs::-webkit-scrollbar{display:none}
@@ -78,7 +75,9 @@ body{
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 @media (max-width:680px){
-  .brand .wm span{display:none}
+  .brand{gap:12px;padding-right:14px}
+  .brand img.potentia{height:20px}
+  .brand img.vott{height:28px}
   .tab .t-sub{display:none}
   .tab{padding:10px 16px}
 }
@@ -88,29 +87,29 @@ body{
 
 <nav class="tabbar" role="tablist" aria-label="World Cup Brand Tracker views">
   <div class="brand">
-    <span class="dot"></span>
-    <span class="wm">VOTT<span>World Cup Tracker</span></span>
+    <a href="https://potentia-sports.co.uk/" target="_blank" rel="noopener noreferrer"><img src="logo-potentia.png" alt="Potentia & Potentia Sports" class="potentia"></a>
+    <a href="https://potentia-insight.co.uk/what-we-do/panels-community-expertise/voice-of-the-trade/" target="_blank" rel="noopener noreferrer"><img src="logo-vott.png" alt="Voice of the Trade" class="vott"></a>
   </div>
   <div class="tabs">
-    <button class="tab" role="tab" id="tab-compare"  aria-selected="true"  aria-controls="panel-compare"  data-panel="compare">
-      <span class="t-title"><span class="pip"></span>Compare yourself</span>
-      <span class="t-sub">See how you compare to the public</span>
+    <button class="tab" role="tab" id="tab-insights" aria-selected="true"  aria-controls="panel-insights" data-panel="insights">
+      <span class="t-title"><span class="pip"></span>The insights</span>
+      <span class="t-sub">Strategic takeaways &amp; trade vs public</span>
     </button>
     <button class="tab" role="tab" id="tab-explore"  aria-selected="false" aria-controls="panel-explore"  data-panel="explore">
       <span class="t-title"><span class="pip"></span>Explore the data</span>
       <span class="t-sub">Drill down into every question</span>
     </button>
-    <button class="tab" role="tab" id="tab-insights" aria-selected="false" aria-controls="panel-insights" data-panel="insights">
-      <span class="t-title"><span class="pip"></span>The insights</span>
-      <span class="t-sub">Strategic takeaways &amp; trade vs public</span>
+    <button class="tab" role="tab" id="tab-compare"  aria-selected="false" aria-controls="panel-compare"  data-panel="compare">
+      <span class="t-title"><span class="pip"></span>Compare yourself</span>
+      <span class="t-sub">See how you compare to the public</span>
     </button>
   </div>
 </nav>
 
 <div class="stage">
-  <div class="panel active" id="panel-compare"  role="tabpanel" aria-labelledby="tab-compare"  data-src="compare.html"></div>
+  <div class="panel active" id="panel-insights" role="tabpanel" aria-labelledby="tab-insights" data-src="insights.html"></div>
   <div class="panel"        id="panel-explore"  role="tabpanel" aria-labelledby="tab-explore"  data-src="explore.html"></div>
-  <div class="panel"        id="panel-insights" role="tabpanel" aria-labelledby="tab-insights" data-src="insights.html"></div>
+  <div class="panel"        id="panel-compare"  role="tabpanel" aria-labelledby="tab-compare"  data-src="compare.html"></div>
 </div>
 
 <script>
@@ -162,7 +161,7 @@ body{
 
   // Deep-link support (#compare / #explore / #insights), default to first tab.
   var start = (location.hash || '').replace('#','');
-  activate(panels[start] ? start : 'compare');
+  activate(panels[start] ? start : 'insights');
 })();
 </script>
 
