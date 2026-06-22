@@ -8,7 +8,8 @@
 <style>
   /* ---- compare-specific components, on the shared brand system ---- */
   :root{--you:#ff7a2f;--you-deep:#e85d10}
-  .quiz-wrap{max-width:760px;margin:0 auto;width:100%;padding-bottom:50px}
+  /* fills the shared 1180px .wrap so margins match Insights & Explore */
+  .quiz-wrap{margin:0 auto;width:100%;padding-bottom:50px}
 
   .topstatus{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:6px 0 16px}
   .sb-brand{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--cream);font-weight:600;display:flex;align-items:center;gap:10px}
@@ -26,7 +27,7 @@
   .kickoff-stat .ks span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream);opacity:.82}
 
   /* question screens */
-  .q-screen{display:none;flex-direction:column;animation:fadeUp .4s ease}
+  .q-screen{display:none;flex-direction:column;animation:fadeUp .4s ease;max-width:760px}
   .q-screen.active{display:flex}
   @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   .q-kicker{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--cream);font-weight:600;margin-bottom:12px}
@@ -166,7 +167,7 @@
 
     <!-- INTRO -->
     <div class="hero" id="intro">
-      <div class="eyebrow"><span class="dot"></span>UK Fan Survey · 244 public + 116 trade respondents</div>
+      <div class="eyebrow"><span class="dot"></span>World Cup Survey Wave 1 · Fielded 5–10 June 2026</div>
       <h1 class="title">Where do you stand vs <em>the public &amp; the trade?</em></h1>
       <p class="subhead">Answer <strong>13 quick questions</strong> about the 2026 FIFA World Cup — your excitement, viewing plans, brand attitudes and predictions. Then we'll reveal exactly how your answers stack up against both the UK general public and the trade audience surveyed for this study.</p>
       <div class="kickoff-stat">
@@ -1289,54 +1290,12 @@ function downloadPersonaCard(){
 
 function showResults(){
   const r = document.getElementById('results');
-  const persona = computePersona();
-
-  // Crowd Sync Score — single-choice questions
-  const singleKeys = ['q1','q2','q3','q14'];
-  let matches = 0;
-  singleKeys.forEach(k=>{
-    const d = DATA[k];
-    const topIdx = d.pct.indexOf(Math.max(...d.pct));
-    if(answers[k] === topIdx) matches++;
-  });
-  // q11: predicted winner
-  const q11sorted = Object.entries(DATA.q11_all).sort((a,b)=>b[1]-a[1]);
-  const topWinner = q11sorted[0][0];
-  if(answers.q11 && answers.q11.toLowerCase() === topWinner.toLowerCase()) matches++;
-  // q13: supported nation
-  const q13sorted = Object.entries(DATA.q13_all).sort((a,b)=>b[1]-a[1]);
-  const topSupport = q13sorted[0][0];
-  if(answers.q13 && answers.q13.toLowerCase() === topSupport.toLowerCase()) matches++;
-  const totalScored = singleKeys.length + 2; // 6 total
-  _card = { persona, matches, totalScored };
-
-  const q1pct = DATA.q1.pct[answers.q1];
-  const q1label = DATA.q1.labels[answers.q1];
 
   let html = `
     <div class="res-header">
       <div class="eyebrow">Full time</div>
-      <h2 class="res-title">Your <em>Fan Pulse</em> report</h2>
+      <h2 class="res-title">Your <em>Comparison</em></h2>
       <p class="lede" style="margin-bottom:0;">Here's how your 13 answers stack up against <strong>${DATA.n_public} UK general public</strong> respondents and <strong>${DATA.n_trade} trade</strong> respondents surveyed about the 2026 World Cup.</p>
-    </div>
-
-    <div class="persona-card">
-      <div class="persona-eyebrow">Your fan profile</div>
-      <h3 class="persona-name">${persona.name}</h3>
-      <p class="persona-tagline">${persona.tagline}</p>
-      <p class="persona-blurb">${persona.blurb}</p>
-      <div class="persona-tags">${persona.tags.map(t=>`<span class="p-tag">${t}</span>`).join('')}</div>
-      <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(243,239,225,0.1);">
-        <button class="btn btn-ghost" style="width:100%;font-size:13.5px;padding:12px 20px;" onclick="downloadPersonaCard()">↓ Download share card</button>
-      </div>
-    </div>
-
-    <div class="scoreline">
-      <div class="big">${matches}/${totalScored}</div>
-      <div class="desc">
-        <strong>Crowd Sync Score</strong> — the number of times your pick matched the public's most popular answer across the scaled &amp; prediction questions.<br>
-        On excitement, <strong>${fmtPct(q1pct)}</strong> of the public picked the same answer as you (<strong>${q1label}</strong>) — versus <strong>${fmtPct(DATA.q1.trade[answers.q1])}</strong> of the trade.
-      </div>
     </div>
   `;
 
