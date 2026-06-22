@@ -296,10 +296,13 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
 /* ---- dropdown option contrast ---- */
 .seg-select option{color:#1a1a2e;background:#e8efe2}
 
-/* ---- per-section callout ---- */
-.section-callout{margin-top:28px;padding:16px 24px;background:rgba(214,0,108,.1);border:1px solid rgba(214,0,108,.28);border-radius:14px;text-align:center}
-.section-callout a{color:var(--magenta);font-weight:600;font-size:14px;text-decoration:none;letter-spacing:.02em}
-.section-callout a:hover{text-decoration:underline}
+/* ---- per-section callout (matches Insights CTA banner) ---- */
+.cta{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;margin-top:28px;background:var(--card);border:1px solid var(--card-edge);border-radius:18px;padding:24px 28px}
+.cta-text{font-family:"Rework Headline",system-ui;font-weight:700;font-size:clamp(18px,2.4vw,26px);line-height:1.12;color:var(--cream);max-width:26ch}
+.cta .btn{flex-shrink:0;font-family:inherit;font-weight:600;font-size:14px;letter-spacing:.02em;cursor:pointer;border:1px solid var(--magenta);background:var(--magenta);color:#fff;padding:13px 22px;border-radius:999px;transition:all .15s;display:inline-flex;align-items:center;gap:10px;text-decoration:none;box-shadow:0 0 18px rgba(214,0,108,.4)}
+.cta .btn .arr{transition:transform .15s}
+.cta .btn:hover{background:var(--magenta-deep);border-color:var(--magenta-deep);color:#fff}
+.cta .btn:hover .arr{transform:translateX(3px)}
 </style>
 </head>
 <body>
@@ -403,7 +406,7 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-<div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
+<div class="wrap"><div class="cta"><p class="cta-text">Want to know what the trade think?</p><a class="btn" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span class="arr" aria-hidden="true">→</span></a></div></div>
 </div></section>
 
 <!-- 2. How they watch -->
@@ -456,7 +459,7 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-<div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
+<div class="wrap"><div class="cta"><p class="cta-text">Want to know what the trade think?</p><a class="btn" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span class="arr" aria-hidden="true">→</span></a></div></div>
 </div></section>
 
 <!-- 3. Predictions -->
@@ -516,7 +519,7 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-<div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
+<div class="wrap"><div class="cta"><p class="cta-text">Want to know what the trade think?</p><a class="btn" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span class="arr" aria-hidden="true">→</span></a></div></div>
 </div></section>
 
 <!-- 4. Brand discovery -->
@@ -553,7 +556,7 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-<div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
+<div class="wrap"><div class="cta"><p class="cta-text">Want to know what the trade think?</p><a class="btn" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span class="arr" aria-hidden="true">→</span></a></div></div>
 </div></section>
 
 <!-- 5. Buy triggers -->
@@ -577,7 +580,7 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-<div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
+<div class="wrap"><div class="cta"><p class="cta-text">Want to know what the trade think?</p><a class="btn" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span class="arr" aria-hidden="true">→</span></a></div></div>
 </div></section>
 
 <!-- 6. Trade triggers (trade-only) -->
@@ -610,7 +613,7 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
     </div>
   </div>
 
-<div class="section-callout"><a href="mailto:info@voiceofthetrade.co.uk">Want to know what the trade think? Get in touch →</a></div>
+<div class="wrap"><div class="cta"><p class="cta-text">Want to know what the trade think?</p><a class="btn" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span class="arr" aria-hidden="true">→</span></a></div></div>
 </div></section>
 
 <!-- 7. Method & capability -->
