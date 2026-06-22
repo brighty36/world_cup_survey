@@ -106,6 +106,11 @@
   .res-header{margin-bottom:14px;padding-top:6px}
   .res-title{font-family:"Rework Headline","Rework Display",system-ui;font-weight:700;font-size:clamp(32px,7vw,56px);line-height:1;letter-spacing:-.02em;margin-bottom:12px}
   .res-title em{font-style:normal;color:var(--magenta)}
+  /* CTA banner — matches Insights & Explore */
+  .cta{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;margin:22px 0;background:var(--card);border:1px solid var(--card-edge);border-radius:18px;padding:24px 28px}
+  .cta-text{font-family:"Rework Headline",system-ui;font-weight:700;font-size:clamp(18px,2.4vw,26px);line-height:1.12;color:var(--cream);max-width:26ch}
+  .cta .btn .arr{transition:transform .15s}
+  .cta .btn:hover .arr{transform:translateX(3px)}
 
   .persona-card{position:relative;border:1px solid var(--card-edge);background:var(--card);border-radius:18px;padding:24px 22px;margin:6px 0 26px;overflow:hidden}
   .persona-card::before{content:"";position:absolute;top:-40px;right:-40px;width:160px;height:160px;border:2px solid rgba(214,0,108,.18);border-radius:50%}
@@ -1296,6 +1301,11 @@ function showResults(){
       <h2 class="res-title">Your <em>Comparison</em></h2>
       <p class="lede" style="margin-bottom:0;">Here's how your 13 answers stack up against <strong>${DATA.n_public} UK general public</strong> respondents and <strong>${DATA.n_trade} trade</strong> respondents surveyed about the 2026 World Cup.</p>
     </div>
+
+    <div class="cta">
+      <p class="cta-text">Want to know what the trade think?</p>
+      <a class="btn btn-primary" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span class="arr" aria-hidden="true">→</span></a>
+    </div>
   `;
 
   // Q1–Q5: viewing questions
@@ -1326,6 +1336,10 @@ function showResults(){
   html += buildBarBlock('q14', 'How far your supported team will go', 'Distribution of predictions.', [answers.q14]);
 
   html += `
+    <div class="cta">
+      <p class="cta-text">Want to know what the trade think?</p>
+      <a class="btn btn-primary" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span class="arr" aria-hidden="true">→</span></a>
+    </div>
     <div class="restart-row"><button class="btn btn-ghost" onclick="location.reload()">↺ Start over</button></div>
     <div class="footer-note">Public sample n=${DATA.n_public} (UK general public) · Trade sample n=${DATA.n_trade} (Voice of the Trade). Your pick marked with ★.</div>
   `;
