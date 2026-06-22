@@ -22,6 +22,10 @@
   .card.reveal.in{opacity:1;transform:none}
   /* tighter rhythm between sections on this page */
   section.block{padding:30px 0}
+  /* flag badges on the "who they back to win" pairs */
+  .winners .pair-lab{display:flex;align-items:center;gap:9px}
+  .winners .flag{width:22px;height:22px;border-radius:50%;overflow:hidden;flex-shrink:0;display:inline-block;border:1px solid rgba(241,244,236,.28);box-shadow:0 1px 3px rgba(0,0,0,.35)}
+  .winners .flag svg{width:100%;height:100%;display:block}
 </style>
 </head>
 <body>
@@ -81,7 +85,40 @@
   </section>
 
   <section class="block">
-    <div class="kicker"><span class="num">2</span>What gets them to buy</div>
+    <div class="kicker"><span class="num">2</span>Who they back to win</div>
+    <h2 class="section-h">Divided on <u>who lifts it</u></h2>
+    <p class="lede">Asked who will win in 2026, the Public lean hardest into <strong>England</strong>. Trade back <strong>Spain</strong> as favourites and are far less likely to say they don't know — a more committed, less hopeful read of the field.</p>
+    <div class="card reveal winners">
+      <div class="pair">
+        <div class="pair-lab"><span class="flag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#fff"/><rect x="9.5" width="5" height="24" fill="#cf142b"/><rect y="9.5" width="24" height="5" fill="#cf142b"/></svg></span>England</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="15"></div></div><span class="pct">15%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="20"></div></div><span class="pct">20%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab"><span class="flag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#c60b1e"/><rect y="6" width="24" height="12" fill="#ffc400"/></svg></span>Spain</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="22"></div></div><span class="pct">22%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="12"></div></div><span class="pct">12%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab"><span class="flag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="8" height="24" fill="#0055a4"/><rect x="8" width="8" height="24" fill="#fff"/><rect x="16" width="8" height="24" fill="#ef4135"/></svg></span>France</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="15"></div></div><span class="pct">15%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="11"></div></div><span class="pct">11%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab"><span class="flag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#009b3a"/><polygon points="12,3 21,12 12,21 3,12" fill="#fedf00"/><circle cx="12" cy="12" r="4" fill="#002776"/></svg></span>Brazil</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="10"></div></div><span class="pct">10%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="12"></div></div><span class="pct">12%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab"><span class="flag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#7f8d85"/><text x="12" y="17" font-size="14" font-weight="700" text-anchor="middle" fill="#fff" font-family="system-ui,sans-serif">?</text></svg></span>Don't know / someone else</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="7"></div></div><span class="pct">7%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="17"></div></div><span class="pct">17%</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker"><span class="num">3</span>What gets them to buy</div>
     <h2 class="section-h">Cash talks <u>louder than purpose</u></h2>
     <p class="lede">Both groups respond to incentives more than brand storytelling — but Trade responds <strong>much</strong> harder to anything transactional, and is less likely to say nothing would move them.</p>
     <div class="card reveal">
@@ -109,7 +146,7 @@
   </section>
 
   <section class="block">
-    <div class="kicker"><span class="num">3</span>How they engage with sponsors</div>
+    <div class="kicker"><span class="num">4</span>How they engage with sponsors</div>
     <h2 class="section-h">Offline action, <u>not online affinity</u></h2>
     <p class="lede">Trade is more likely to <strong>enter a promotion</strong> than the Public — but far less likely to follow, like, or share a brand online. The relationship is transactional, not social.</p>
     <div class="card reveal">
@@ -132,9 +169,55 @@
   </section>
 
   <section class="block">
-    <div class="kicker"><span class="num">4</span>The contradiction, in full</div>
+    <div class="kicker"><span class="num">5</span>What they associate with the tournament</div>
+    <h2 class="section-h">A third draw <u>a brand blank</u></h2>
+    <p class="lede">Before a ball is kicked, roughly a third of each group can't name <strong>any</strong> brand they associate with the 2026 World Cup. Open ground for a sponsor to claim — and a low bar for recall to clear.</p>
+    <div class="card reveal">
+      <div class="pair">
+        <div class="pair-lab">Don't associate any brand with the tournament</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="31"></div></div><span class="pct">31%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="35"></div></div><span class="pct">35%</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker"><span class="num">6</span>What makes a brand stand out — to trade</div>
+    <h2 class="section-h">The win is at <u>the merchant counter</u></h2>
+    <p class="lede"><strong>Trade only.</strong> Asked what would make a brand stand out during the World Cup, verified tradespeople point overwhelmingly to the counter and the toolbag — deals where they buy, offers on kit. Social content and on-site branding trail badly.</p>
+    <div class="card reveal">
+      <div class="bar-row"><div class="bar-lab">Trade counter deal or promotion <span class="pct">58%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="58"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">World Cup offer on tools or equipment <span class="pct">51%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="51"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">A colleague's recommendation <span class="pct">22%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="22"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">Social content made for tradespeople <span class="pct">16%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="16"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">Trade event or exhibition <span class="pct">12%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="12"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">Watching with workmates <span class="pct">11%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="11"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">Brand on site — vans, kit, materials <span class="pct">8%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="8"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">None of these <span class="pct">22%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="22"></div></div></div>
+      <div class="card-foot"><span class="small-base">Trade only · VOTT, n=116</span><span>Respondents could select more than one prompt.</span></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker"><span class="num">7</span>The contradiction, in full</div>
     <h2 class="section-h">More committed. <u>Less thrilled.</u></h2>
     <p class="lede">Trade is the heavier viewer on every measure of actual attendance to the tournament — and the cooler read on every measure of how it <em style="color:var(--cream)">feels</em>. Don't mistake watch-rate for hype.</p>
+    <div class="cards two" style="margin-bottom:22px">
+      <div class="card reveal scoreboard-card">
+        <div class="card-head"><div><span class="card-q">Behaviour</span><h3>Likely to watch the tournament</h3></div></div>
+        <div class="bigstat">
+          <div class="stat"><div class="v t">78%</div><div class="vlab">Trade</div></div>
+          <div class="stat"><div class="v p">67%</div><div class="vlab">Public</div></div>
+        </div>
+      </div>
+      <div class="card reveal scoreboard-card">
+        <div class="card-head"><div><span class="card-q">Sentiment</span><h3>Net excitement vs previous tournaments</h3></div></div>
+        <div class="bigstat">
+          <div class="stat"><div class="v t">&minus;30</div><div class="vlab">Trade</div><div class="vsub">more-excited minus less-excited</div></div>
+          <div class="stat"><div class="v p">+16</div><div class="vlab">Public</div><div class="vsub">more-excited minus less-excited</div></div>
+        </div>
+      </div>
+    </div>
     <div class="cards two">
       <div class="card reveal">
         <div class="card-head"><div><span class="card-q">Behaviour</span><h3>What they'll watch</h3></div></div>
@@ -156,7 +239,7 @@
   </section>
 
   <section class="block">
-    <div class="kicker"><span class="num">5</span>So what</div>
+    <div class="kicker"><span class="num">8</span>So what</div>
     <h2 class="section-h">Three calls for the <u>client brief</u></h2>
     <p class="lede">The gaps above aren't trivia — they point to different media, different offers, and a different read on "success" depending on which audience a sponsor is actually trying to reach.</p>
     <div class="cards">
