@@ -19,17 +19,16 @@
   --card-edge:rgba(241,244,236,.13);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
 body{
   font-family:"Rework Text","Archivo","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
   background:var(--pitch-dark);color:var(--chalk);
-  display:flex;flex-direction:column;overflow:hidden;
   -webkit-font-smoothing:antialiased;
 }
 
 /* ---------- tab bar ---------- */
 .tabbar{
-  flex:none;display:flex;align-items:stretch;gap:0;
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:stretch;gap:0;
   background:rgba(8,32,20,.96);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--card-edge);
   padding:0 16px;min-height:58px;
@@ -62,10 +61,11 @@ body{
 .tab:focus-visible{outline:2px solid var(--magenta);outline-offset:-2px}
 
 /* ---------- panels ---------- */
-.stage{flex:1;position:relative;background:var(--pitch-dark)}
-.panel{position:absolute;inset:0;display:none}
+.stage{position:relative;background:var(--pitch-dark)}
+.panel{display:none;position:relative}
 .panel.active{display:block}
-.panel iframe{width:100%;height:100%;border:0;display:block;background:var(--pitch-dark)}
+/* height is set per-panel from the height each tab reports (see script) */
+.panel iframe{width:100%;height:600px;border:0;display:block;background:var(--pitch-dark)}
 .loader{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   color:var(--cream);font-size:13px;letter-spacing:.16em;text-transform:uppercase;gap:12px;
@@ -117,6 +117,47 @@ body{
   var tabs   = Array.prototype.slice.call(document.querySelectorAll('.tab'));
   var panels = {};
   document.querySelectorAll('.panel').forEach(function(p){ panels[p.id.replace('panel-','')] = p; });
+  var heights = {}; // last content height reported by each tab
+
+  // ---- Report our own height up to the embedding site (host page). ----
+  // This is the snippet supplied by the web team, adapted to only post when the
+  // height actually changes so the host <-> embed handshake can't loop forever.
+  var lastSelf = -1, selfPending = false;
+  function resizeMessage(){
+    selfPending = false;
+    var rect = document.documentElement.getBoundingClientRect();
+    var h = Math.ceil(rect.height);
+    if(h === lastSelf) return;
+    lastSelf = h;
+    try{ window.parent.postMessage({ type: "resize", rect: rect }, "*"); }catch(e){}
+  }
+  function reportUp(){ if(selfPending) return; selfPending = true; requestAnimationFrame(resizeMessage); }
+  window.addEventListener("resize", function(){ reportUp(); setTimeout(reportUp, 1000); });
+  new MutationObserver(reportUp).observe(document.body, { attributes:true, childList:true, subtree:true });
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(reportUp);
+
+  // ---- Receive messages from the tab iframes. ----
+  window.addEventListener('message', function(e){
+    var d = e.data;
+    if(!d) return;
+
+    // A tab asking the shell to switch to another tab (in-app links).
+    if(d.type === 'wc-nav' && panels[d.panel]){ activate(d.panel); return; }
+
+    // A tab reporting its content height -> size that tab's iframe to match.
+    if(d.type === 'wc-embed-size' && typeof d.height === 'number'){
+      var name = null;
+      Object.keys(panels).forEach(function(k){
+        var fr = panels[k].querySelector('iframe');
+        if(fr && fr.contentWindow === e.source) name = k;
+      });
+      if(!name) return;
+      heights[name] = d.height;
+      var fr = panels[name].querySelector('iframe');
+      if(fr) fr.style.height = d.height + 'px';
+      reportUp();
+    }
+  });
 
   // Lazy-load each iframe the first time its tab is opened.
   function ensureLoaded(panel){
@@ -129,6 +170,7 @@ body{
     var f = document.createElement('iframe');
     f.title = panel.getAttribute('aria-labelledby');
     f.loading = 'eager';
+    f.scrolling = 'no'; // the iframe is sized to its content, so no inner scroll
     f.addEventListener('load', function(){ loader.remove(); });
     f.src = panel.dataset.src;
     panel.appendChild(f);
@@ -145,6 +187,10 @@ body{
       panels[k].classList.toggle('active', k === name);
     });
     ensureLoaded(panels[name]);
+    // Restore the height this tab last reported so its panel opens at full size.
+    var fr = panels[name].querySelector('iframe');
+    if(fr && heights[name]) fr.style.height = heights[name] + 'px';
+    reportUp();
     if(history.replaceState) history.replaceState(null, '', '#' + name);
   }
 

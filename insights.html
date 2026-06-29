@@ -62,8 +62,8 @@
       <span class="chip"><span class="swatch p"></span>Public, general panel, n=244</span>
     </div>
     <div class="hero-cta">
-      <a class="btn btn-primary" href="index.html#explore" target="_top">Explore the data <span class="arr" aria-hidden="true">→</span></a>
-      <a class="btn btn-ghost" href="index.html#compare" target="_top">Compare yourself <span class="arr" aria-hidden="true">→</span></a>
+      <a class="btn btn-primary" href="index.html#explore" data-nav="explore">Explore the data <span class="arr" aria-hidden="true">→</span></a>
+      <a class="btn btn-ghost" href="index.html#compare" data-nav="compare">Compare yourself <span class="arr" aria-hidden="true">→</span></a>
     </div>
   </header>
 
@@ -317,6 +317,8 @@
     cards.forEach(function(c){ obs.observe(c); });
   })();
 </script>
+
+<script src="embed-child.js"></script>
 
 </body>
 </html>
