@@ -1,0 +1,45 @@
+name: Deploy static site to GitHub Pages
+
+# Publishes the repository as a static site to GitHub Pages.
+# Requires: repo is Public, and Settings > Pages > Source is set to "GitHub Actions".
+
+on:
+  # Deploy on every push to the default branch
+  push:
+    branches: [main]
+  # Allow a manual run from the Actions tab
+  workflow_dispatch:
+
+# Permissions the GITHUB_TOKEN needs to deploy to Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; don't cancel an in-progress production deploy
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Publish the whole repo root (index.html is the entry point)
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
