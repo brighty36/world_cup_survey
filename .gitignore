@@ -13,12 +13,14 @@
 03 Outputs - Charts & Deck/*.pptx
 
 # Trial / TRIAL-licensed Rework fonts — do NOT ship to a public repo.
-# The HTML references the Rework faces but falls back to a web-safe grotesque,
-# so the published page still renders without the licensed files.
 rework-font-family.zip
 *TRIAL*.otf
 *.otf
-fonts/
+# Ignore the fonts working folder, but DO ship the licensed production web fonts
+# (Rework Text .woff / .woff2) so the published site renders in-brand.
+fonts/*
+!fonts/*.woff
+!fonts/*.woff2
 
 # Build pipeline, intermediates and working copies (internal)
 05 Web Report/_build/
@@ -31,6 +33,9 @@ fonts/
 
 # Reference & inspiration (internal)
 06 Reference & Inspo/
+
+# Claude Design source files (design candidates + support runtime) — not for deploy
+Claude Design Files/
 
 # Local tooling config
 .claude/

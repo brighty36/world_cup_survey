@@ -8,6 +8,7 @@
 <style>
   /* page-specific tweaks on top of the shared brand system */
   .scoreboard-card .bigstat{align-items:stretch}
+  .scoreboard-card .bigstat.vs{align-items:center}
   .scoreboard-card .stat .vsub{font-size:12.5px;color:var(--chalk);opacity:.8;margin-top:10px;max-width:24ch;margin-left:auto;margin-right:auto;line-height:1.45}
   .vs-mid{display:flex;align-items:center;justify-content:center}
   .vs-mid span{font-family:"Rework Headline",system-ui;font-weight:700;color:var(--cream);font-size:13px;letter-spacing:.18em;text-transform:uppercase;opacity:.7}
@@ -30,9 +31,14 @@
   .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
   .hero-cta .btn .arr{transition:transform .15s}
   .hero-cta .btn:hover .arr{transform:translateX(3px)}
-  .cta{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;background:var(--card);border:1px solid var(--card-edge);border-radius:18px;padding:26px 30px}
-  .cta-text{font-family:"Rework Headline",system-ui;font-weight:700;font-size:clamp(19px,2.5vw,28px);line-height:1.12;color:var(--cream);max-width:26ch}
+  .cta{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;background:var(--card);border:1px solid var(--card-edge);border-left:3px solid var(--magenta);border-radius:12px;padding:26px 30px}
+  .cta-text{font-family:"Rework Headline",system-ui;font-weight:600;font-size:clamp(19px,2.5vw,28px);line-height:1.12;color:var(--chalk);max-width:26ch}
   .cta .btn{flex-shrink:0}
+  /* hero panel-size chips (Trade / Public sample counts) */
+  .panel-chips{display:flex;gap:12px;flex-wrap:wrap}
+  .pchip{display:inline-flex;align-items:center;font-weight:700;font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:8px 14px;border-radius:4px}
+  .pchip.t{color:#fff;background:var(--magenta)}
+  .pchip.p{color:var(--pitch-dark);background:var(--cream)}
 </style>
 </head>
 <body>
@@ -57,9 +63,9 @@
     <div class="eyebrow"><span class="dot"></span>World Cup Survey Wave 1 · Fielded 5–10 June 2026</div>
     <h1 class="title">The World&nbsp;Cup is here, and we've compared how the&nbsp;<em>trades</em> and the <em>public</em> will watch and engage.</h1>
     <p class="subhead">Two UK panels, side by side, on the 2026 FIFA World Cup. The <strong>public</strong> and <strong>Voice of the Trade</strong> (verified UK tradespeople). The strategic takeaways below are drawn from where the two crowds split.</p>
-    <div class="legend" style="margin-top:26px">
-      <span class="chip"><span class="swatch t"></span>Trade, VOTT sample, n=116</span>
-      <span class="chip"><span class="swatch p"></span>Public, general panel, n=244</span>
+    <div class="panel-chips" style="margin-top:26px">
+      <span class="pchip t">Trade · n=116</span>
+      <span class="pchip p">Public · n=244</span>
     </div>
     <div class="hero-cta">
       <a class="btn btn-primary" href="index.html#explore" data-nav="explore">Explore the data <span class="arr" aria-hidden="true">→</span></a>
@@ -223,15 +229,17 @@
     <div class="cards two" style="margin-bottom:22px">
       <div class="card reveal scoreboard-card">
         <div class="card-head"><div><span class="card-q">Behaviour</span><h3>Likely to watch the tournament</h3></div></div>
-        <div class="bigstat">
+        <div class="bigstat vs">
           <div class="stat"><div class="v t">78%</div><div class="vlab">Trade</div></div>
+          <div class="vs-sep">vs</div>
           <div class="stat"><div class="v p">67%</div><div class="vlab">Public</div></div>
         </div>
       </div>
       <div class="card reveal scoreboard-card">
         <div class="card-head"><div><span class="card-q">Sentiment</span><h3>Net excitement vs previous tournaments</h3></div></div>
-        <div class="bigstat">
+        <div class="bigstat vs">
           <div class="stat"><div class="v t">&minus;30</div><div class="vlab">Trade</div><div class="vsub">more-excited minus less-excited</div></div>
+          <div class="vs-sep">vs</div>
           <div class="stat"><div class="v p">+16</div><div class="vlab">Public</div><div class="vsub">more-excited minus less-excited</div></div>
         </div>
       </div>
@@ -261,15 +269,15 @@
     <h2 class="section-h">Three calls for the <u>client brief</u></h2>
     <p class="lede">The gaps above aren't trivia: they point to different media, different offers, and a different read on "success" depending on which audience a sponsor is actually trying to reach.</p>
     <div class="cards">
-      <div class="card reveal">
+      <div class="card reveal accent">
         <div class="card-head"><div><span class="card-q">Budget · 01</span><h3>Lead with the offer, not the story</h3></div><span class="indicative">60% vs 44%</span></div>
         <p class="lede" style="margin-bottom:0">Trade responds far harder to discounts and prize draws than to purpose-led messaging ("supports grassroots football" barely moves the needle). For trade-facing creative, put the tangible offer in the headline, not buried under brand narrative.</p>
       </div>
-      <div class="card reveal">
+      <div class="card reveal accent">
         <div class="card-head"><div><span class="card-q">Channel · 02</span><h3>Sponsor the room, not the feed</h3></div><span class="indicative">48% vs 25%</span></div>
         <p class="lede" style="margin-bottom:0">Trade engagement is physical: pubs, workplaces, watch-parties. Social follow and content engagement run in the opposite direction. Shift trade media spend toward trade-counter activations, workplace sweepstakes, and on-site screenings over paid social.</p>
       </div>
-      <div class="card reveal">
+      <div class="card reveal accent">
         <div class="card-head"><div><span class="card-q">Interpretation · 03</span><h3>Don't mistake calm for cold</h3></div><span class="indicative">66% vs 47%</span></div>
         <p class="lede" style="margin-bottom:0">Trade reports lower excitement on every sentiment question, yet shows up for more of the tournament than the public. If a brand tracker leads with "excitement," it will under-rate this audience. Weight behavioural intent over stated enthusiasm when sizing trade opportunity.</p>
       </div>
