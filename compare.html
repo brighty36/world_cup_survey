@@ -886,8 +886,18 @@ function refreshNextButton(){
   btn.disabled = !ok;
 }
 
+// Bring the top of the quiz back into view after a step change. The page is
+// shown as a single auto-sized iframe with no internal scroll, so scrolling our
+// own window does nothing when embedded; scrollIntoView bubbles up through the
+// iframe and scrolls the host page to reveal the element.
+function scrollToTop(){
+  var top = document.querySelector('.quiz-wrap') || document.body;
+  window.scrollTo(0, 0);
+  if(top && top.scrollIntoView) top.scrollIntoView({ block:'start' });
+}
+
 function prevQuestion(){
-  if(step > 0){ step--; renderQuestion(); }
+  if(step > 0){ step--; renderQuestion(); scrollToTop(); }
 }
 
 function nextQuestion(){
@@ -902,11 +912,13 @@ function nextQuestion(){
   if(step < QUESTIONS.length - 1){
     step++;
     renderQuestion();
+    scrollToTop();
   } else {
     step = QUESTIONS.length;
     document.getElementById('quizArea').innerHTML = '';
     updateProgress();
     showResults();
+    scrollToTop();
   }
 }
 
