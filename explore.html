@@ -6,12 +6,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026 World Cup Brand Tracker: Wave 1 · Voice of the Trade</title>
 <style>
-@font-face{font-family:"Rework Headline";src:url("fonts/ReworkHeadlineTRIAL-Bold.otf") format("opentype");font-weight:700;font-display:swap;}
-@font-face{font-family:"Rework Headline";src:url("fonts/ReworkHeadlineTRIAL-Semibold.otf") format("opentype");font-weight:600;font-display:swap;}
-@font-face{font-family:"Rework Display";src:url("fonts/ReworkDisplayTRIAL-Bold.otf") format("opentype");font-weight:700;font-display:swap;}
-@font-face{font-family:"Rework Text";src:url("fonts/ReworkTextTRIAL-Regular.otf") format("opentype");font-weight:400;font-display:swap;}
-@font-face{font-family:"Rework Text";src:url("fonts/ReworkTextTRIAL-Semibold.otf") format("opentype");font-weight:600;font-display:swap;}
-@font-face{font-family:"Rework Text";src:url("fonts/ReworkTextTRIAL-Bold.otf") format("opentype");font-weight:700;font-display:swap;}
+/* Production Rework Text web fonts (licensed woff2/woff). Light 300–500, Bold 600–900. */
+@font-face{font-family:"Rework Text";src:url("fonts/ReworkText-Light.woff2") format("woff2"),url("fonts/ReworkText-Light.woff") format("woff");font-weight:300 500;font-style:normal;font-display:swap;}
+@font-face{font-family:"Rework Text";src:url("fonts/ReworkText-Bold.woff2") format("woff2"),url("fonts/ReworkText-Bold.woff") format("woff");font-weight:600 900;font-style:normal;font-display:swap;}
+@font-face{font-family:"Rework Headline";src:url("fonts/ReworkText-Bold.woff2") format("woff2"),url("fonts/ReworkText-Bold.woff") format("woff");font-weight:600 900;font-style:normal;font-display:swap;}
+@font-face{font-family:"Rework Display";src:url("fonts/ReworkText-Bold.woff2") format("woff2"),url("fonts/ReworkText-Bold.woff") format("woff");font-weight:600 900;font-style:normal;font-display:swap;}
 
 :root{
   --pitch-deep:#1d4a2a;
@@ -40,7 +39,7 @@ body{
 button{font-family:inherit;color:inherit}
 a{color:var(--chalk);text-decoration:none;border-bottom:1px solid rgba(241,244,236,.35)}
 a:hover{border-bottom-color:var(--magenta)}
-h1,h2,h3,h4{font-family:"Rework Headline","Rework Display","Archivo Black",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em;line-height:1.04}
+h1,h2,h3,h4{font-family:"Rework Text","Rework Headline","Rework Display","Archivo Black",system-ui,sans-serif;font-weight:600;letter-spacing:-.01em;line-height:1.04}
 
 /* ---------- pitch backdrop ---------- */
 .pitch-bg{position:fixed;inset:0;z-index:-2;background:
@@ -202,9 +201,9 @@ h2.section-h{font-size:clamp(28px,3.8vw,46px);max-width:22ch;margin-bottom:14px}
 .bar-row:last-child{margin-bottom:2px}
 .bar-lab{font-size:13px;color:var(--chalk);display:flex;justify-content:space-between;gap:14px;align-items:baseline;margin-bottom:6px}
 .bar-lab .pct{font-family:"Rework Headline","Rework Display",system-ui;font-weight:700;font-size:14px;color:var(--cream);letter-spacing:0;}
-.bar-track{height:14px;border-radius:7px;background:rgba(0,0,0,.32);overflow:hidden;position:relative}
-.bar-fill{height:100%;width:0;border-radius:7px;transition:width .9s cubic-bezier(.18,.85,.34,1)}
-.bar-fill.t{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta))}
+.bar-track{height:14px;border-radius:3px;background:rgba(0,0,0,.34);overflow:hidden;position:relative}
+.bar-fill{height:100%;width:0;border-radius:3px;transition:width .9s cubic-bezier(.18,.85,.34,1)}
+.bar-fill.t{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta));box-shadow:0 0 14px rgba(214,0,108,.5)}
 .bar-fill.p{background:linear-gradient(90deg,var(--cream-edge),var(--cream))}
 .bar-fill.a{background:linear-gradient(90deg,#7f8d85,#a8b3a6)}
 
@@ -217,7 +216,7 @@ h2.section-h{font-size:clamp(28px,3.8vw,46px);max-width:22ch;margin-bottom:14px}
 .pair-row .pname.p{color:var(--cream)}
 .pair-row .pct{font-family:"Rework Headline",system-ui;font-weight:700;font-size:13px;width:42px;color:var(--cream);text-align:right;flex-shrink:0}
 .pair-row .bar-track{flex:1}
-.pair-row.t .bar-fill{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta))}
+.pair-row.t .bar-fill{background:linear-gradient(90deg,var(--magenta-deep),var(--magenta));box-shadow:0 0 14px rgba(214,0,108,.5)}
 .pair-row.p .bar-fill{background:linear-gradient(90deg,var(--cream-edge),var(--cream))}
 .pair-row .pname.a{color:#c2ccc2}
 .pair-row.a .bar-fill{background:linear-gradient(90deg,#7f8d85,#a8b3a6)}
@@ -234,7 +233,7 @@ h2.section-h{font-size:clamp(28px,3.8vw,46px);max-width:22ch;margin-bottom:14px}
 .bigstat{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:end}
 .bigstat .stat{text-align:center;padding:8px}
 .bigstat .stat .v{font-family:"Rework Headline",system-ui;font-weight:700;font-size:clamp(48px,8vw,80px);line-height:1;letter-spacing:-.02em;}
-.bigstat .stat .v.t{color:var(--magenta)}
+.bigstat .stat .v.t{color:var(--magenta);text-shadow:0 0 24px rgba(214,0,108,.5)}
 .bigstat .stat .v.p{color:var(--cream)}
 .bigstat .stat .v.a{color:#bcc7bd}
 .bigstat .stat .vlab{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cream);opacity:.85;margin-top:8px;font-weight:600}
