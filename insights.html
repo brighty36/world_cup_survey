@@ -39,6 +39,25 @@
   .pchip{display:inline-flex;align-items:center;font-weight:700;font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:8px 14px;border-radius:4px}
   .pchip.t{color:#fff;background:var(--magenta)}
   .pchip.p{color:var(--pitch-dark);background:var(--cream)}
+  /* wave switcher — sits above the hero, one panel visible at a time */
+  /* scroll-margin clears the shell's sticky tab bar when we scroll this into view */
+  .wavebar{display:flex;gap:6px;padding:22px 0 0;flex-wrap:wrap;scroll-margin-top:74px}
+  .wavetab{
+    appearance:none;border:1px solid var(--card-edge);background:rgba(0,0,0,.18);
+    color:var(--chalk);cursor:pointer;border-radius:10px;padding:11px 22px;
+    display:flex;flex-direction:column;gap:3px;text-align:left;transition:all .15s;
+  }
+  .wavetab:hover{border-color:rgba(214,0,108,.55)}
+  .wavetab .w-title{font-weight:700;font-size:14.5px;letter-spacing:.01em}
+  .wavetab .w-sub{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--cream);opacity:.72;font-weight:600}
+  .wavetab[aria-selected="true"]{background:var(--magenta);border-color:var(--magenta);box-shadow:0 0 18px rgba(214,0,108,.35)}
+  .wavetab[aria-selected="true"] .w-title{color:#fff}
+  .wavetab[aria-selected="true"] .w-sub{color:#fff;opacity:.85}
+  .wavetab:focus-visible{outline:2px solid var(--cream);outline-offset:2px}
+  .wave-panel{display:none}
+  .wave-panel.active{display:block}
+  /* brand-recall pairs (wave 2) drop the flag badge but keep the winners rhythm */
+  .brandlist .pair-lab{font-weight:700}
 </style>
 </head>
 <body>
@@ -63,6 +82,19 @@
 </div>
 
 <div class="wrap">
+
+  <div class="wavebar" role="tablist" aria-label="Survey wave">
+    <button class="wavetab" role="tab" id="wavetab-w1" aria-selected="true" aria-controls="wave-w1" data-wave="w1">
+      <span class="w-title">Wave One</span>
+      <span class="w-sub">Before kick-off · June</span>
+    </button>
+    <button class="wavetab" role="tab" id="wavetab-w2" aria-selected="false" aria-controls="wave-w2" data-wave="w2">
+      <span class="w-title">Wave Two</span>
+      <span class="w-sub">The verdict · July</span>
+    </button>
+  </div>
+
+  <div class="wave-panel active" id="wave-w1" role="tabpanel" aria-labelledby="wavetab-w1">
 
   <header class="hero" style="padding-top:42px">
     <div class="eyebrow"><span class="dot"></span>World Cup Survey Wave 1 · Fielded 5–10 June 2026</div>
@@ -297,19 +329,313 @@
   </section>
 
   <footer class="foot">
-    <span>UK FAN SURVEY · 2026 FIFA WORLD CUP</span>
+    <span>UK FAN SURVEY · 2026 FIFA WORLD CUP · WAVE 1</span>
     <span>TRADE (VOTT, n=116) vs PUBLIC (PANEL, n=244)</span>
   </footer>
+
+  </div><!-- /wave-w1 -->
+
+  <div class="wave-panel" id="wave-w2" role="tabpanel" aria-labelledby="wavetab-w2">
+
+  <header class="hero" style="padding-top:42px">
+    <div class="eyebrow"><span class="dot"></span>World Cup Survey Wave 2 · Fielded 14–16 July 2026</div>
+    <h1 class="title">The World&nbsp;Cup is almost over. Here's how it <em>actually</em> went.</h1>
+    <p class="subhead">In June we asked what these two crowds <strong>expected</strong>. Now we've gone back to the same two, the UK <strong>public</strong> and verified tradespeople from <strong>Voice of the Trade</strong>, to ask what they really did. The gap between the two is the story, and it's where the sponsor money was won and lost.</p>
+    <div class="panel-chips" style="margin-top:26px">
+      <span class="pchip t">Trade · n=136</span>
+      <span class="pchip p">Public · n=200</span>
+    </div>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="index.html#explore" data-nav="explore">Explore the data <span class="arr" aria-hidden="true">→</span></a>
+      <a class="btn btn-ghost" href="index.html#compare" data-nav="compare">Compare yourself <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+  </header>
+
+  <section class="block">
+    <div class="kicker"><span class="num">1</span>The verdict</div>
+    <h2 class="section-h">The sceptics <u>got won over</u></h2>
+    <p class="lede">Before a ball was kicked the trades were the doubters, net &minus;30 on excitement against past tournaments while the public ran positive. It didn't hold. By the end seven in ten trades said they'd enjoyed it, level with the public. The difference is what each crowd was measuring against: the public got roughly the tournament they expected, the trades got rather more than they'd bargained for.</p>
+    <div class="cards two" style="margin-bottom:22px">
+      <div class="card reveal scoreboard-card">
+        <div class="card-head"><div><span class="card-q">Sentiment</span><h3>Agree they've enjoyed the tournament</h3></div></div>
+        <div class="bigstat vs">
+          <div class="stat"><div class="v t">71%</div><div class="vlab">Trade</div></div>
+          <div class="vs-sep">vs</div>
+          <div class="stat"><div class="v p">70%</div><div class="vlab">Public</div></div>
+        </div>
+      </div>
+      <div class="card reveal scoreboard-card">
+        <div class="card-head"><div><span class="card-q">Sentiment</span><h3>Say it's been better than they expected</h3></div></div>
+        <div class="bigstat vs">
+          <div class="stat"><div class="v t">49%</div><div class="vlab">Trade</div><div class="vsub">against a low bar set in June</div></div>
+          <div class="vs-sep">vs</div>
+          <div class="stat"><div class="v p">63%</div><div class="vlab">Public</div><div class="vsub">against a high bar set in June</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card reveal" data-scale="100">
+      <div class="card-head"><div><span class="card-q">Wave 1 → Wave 2</span><h3>Excited before kick-off, then enjoyed it by the end</h3></div></div>
+      <div class="pair">
+        <div class="pair-lab">Trade</div>
+        <div class="pair-row t"><span class="pname t">Before</span><div class="bar-track"><div class="bar-fill" data-pct="52"></div></div><span class="pct">52%</span></div>
+        <div class="pair-row t"><span class="pname t">After</span><div class="bar-track"><div class="bar-fill" data-pct="71"></div></div><span class="pct">71%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab">Public</div>
+        <div class="pair-row p"><span class="pname p">Before</span><div class="bar-track"><div class="bar-fill" data-pct="60"></div></div><span class="pct">60%</span></div>
+        <div class="pair-row p"><span class="pname p">After</span><div class="bar-track"><div class="bar-fill" data-pct="70"></div></div><span class="pct">70%</span></div>
+      </div>
+      <div class="card-foot"><span>Wave 1: agree they're excited for the tournament. Wave 2: agree they've enjoyed it so far.</span><span>Trade +19pp · Public +10pp</span></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker"><span class="num">2</span>How late they stayed up</div>
+    <h2 class="section-h">The tournament's <u>night owls</u></h2>
+    <p class="lede">North American kick-off times made this a late-night World Cup, and the trades sat up for it more than anyone. Nearly six in ten watched past 2am and well over a third went to 3am or beyond, and they did it knowing they'd be on a job at seven the next morning. That's the commitment Wave 1 hinted at, showing up in the data.</p>
+    <div class="card reveal">
+      <div class="pair">
+        <div class="pair-lab">Stayed up to 2am or later for a match</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="57.1"></div></div><span class="pct">57%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="47.1"></div></div><span class="pct">47%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab">Stayed up to 3am or later for a match</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="37.0"></div></div><span class="pct">37%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="24.7"></div></div><span class="pct">25%</span></div>
+      </div>
+      <div class="card-foot"><span class="small-base">Watched any of the tournament · Trade n=119 · Public n=170</span><span>Fieldwork 14–16 July 2026</span></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker"><span class="num">3</span>Where they watched from</div>
+    <h2 class="section-h">The pub World Cup <u>never happened</u></h2>
+    <p class="lede">This is the one that should sting. In June the trades told us they'd be out for it, and Wave 1's big finding was that they show up in person. The late kick-offs put a stop to that. Nine in ten ended up watching at home and just 17% made it to a pub or bar, barely more than the public. Any activation built around a crowd in a bar was spending against a room that didn't fill.</p>
+    <div class="card reveal" data-scale="100">
+      <div class="pair">
+        <div class="pair-lab">Trade watching mainly in a pub or bar</div>
+        <div class="pair-row p"><span class="pname p">Expected</span><div class="bar-track"><div class="bar-fill" data-pct="29.3"></div></div><span class="pct">29%</span></div>
+        <div class="pair-row t"><span class="pname t">Actual</span><div class="bar-track"><div class="bar-fill" data-pct="16.8"></div></div><span class="pct">17%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab">Trade watching mainly at home</div>
+        <div class="pair-row p"><span class="pname p">Expected</span><div class="bar-track"><div class="bar-fill" data-pct="78.4"></div></div><span class="pct">78%</span></div>
+        <div class="pair-row t"><span class="pname t">Actual</span><div class="bar-track"><div class="bar-fill" data-pct="91.6"></div></div><span class="pct">92%</span></div>
+      </div>
+      <div class="card-foot"><span>Expected: Wave 1, trade n=116. Actual: Wave 2, trade watchers n=119.</span><span>Public actuals: 16% pub or bar · 89% at home</span></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker"><span class="num">4</span>Who they got behind</div>
+    <h2 class="section-h">The trade backed <u>England harder</u></h2>
+    <p class="lede">In June the trades were the hard-headed ones, making Spain their favourite and backing England less than the public did. Asked who they'd actually been supporting, that reserve vanished: three quarters got behind England, comfortably ahead of the public. Picking a winner with your head and picking a team with your heart turn out to be different questions.</p>
+    <div class="card reveal winners" data-scale="100">
+      <div class="pair">
+        <div class="pair-lab"><span class="flag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#fff"/><rect x="9.5" width="5" height="24" fill="#cf142b"/><rect y="9.5" width="24" height="5" fill="#cf142b"/></svg></span>Have been supporting England</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="74"></div></div><span class="pct">74%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="62"></div></div><span class="pct">62%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab">Happy with their team's performance</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="79.8"></div></div><span class="pct">80%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="78.8"></div></div><span class="pct">79%</span></div>
+      </div>
+      <div class="card-foot"><span>Nation supported asked of all (trade n=136, public n=200); performance asked of those supporting a team (trade n=119, public n=165).</span></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="cta">
+      <p class="cta-text">Need help understanding the trades?</p>
+      <a class="btn btn-primary" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker"><span class="num">5</span>What they associate with the tournament</div>
+    <h2 class="section-h">The blank closed, <u>but not enough</u></h2>
+    <p class="lede">Wave 1's open goal got narrower. A third of each crowd couldn't name a single World Cup brand in June; now it's down to 22% for both. A whole tournament of advertising moved that number by roughly ten points, which tells you both that cut-through was real and that more than one in five people still sat through the lot and took away nothing at all.</p>
+    <div class="card reveal" style="margin-bottom:22px">
+      <div class="pair">
+        <div class="pair-lab">Trade who can't name any World Cup brand</div>
+        <div class="pair-row t"><span class="pname t">Before</span><div class="bar-track"><div class="bar-fill" data-pct="31"></div></div><span class="pct">31%</span></div>
+        <div class="pair-row t"><span class="pname t">After</span><div class="bar-track"><div class="bar-fill" data-pct="22.1"></div></div><span class="pct">22%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab">Public who can't name any World Cup brand</div>
+        <div class="pair-row p"><span class="pname p">Before</span><div class="bar-track"><div class="bar-fill" data-pct="34.8"></div></div><span class="pct">35%</span></div>
+        <div class="pair-row p"><span class="pname p">After</span><div class="bar-track"><div class="bar-fill" data-pct="22.5"></div></div><span class="pct">22%</span></div>
+      </div>
+      <div class="card-foot"><span>Unprompted brand association. Wave 1 (116 / 244) vs Wave 2 (136 / 200).</span><span>Trade &minus;9pp · Public &minus;12pp</span></div>
+    </div>
+    <h3 style="font-size:19px;margin:0 0 16px;font-weight:700">Visa is the trade's standout brand</h3>
+    <p class="lede" style="margin-bottom:22px">Coca-Cola leads recall with everyone, as it usually does. The interesting one is Visa: level pegging with Adidas among the trades at 19%, but managing only 8% with the public. It's the widest trade-versus-public gap of any brand here, and the only one that looks like a genuinely trade-skewed result rather than a scaled-down version of the public's.</p>
+    <div class="card reveal brandlist">
+      <div class="pair">
+        <div class="pair-lab">Coca-Cola</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="29"></div></div><span class="pct">29%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="23"></div></div><span class="pct">23%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab">Adidas</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="22"></div></div><span class="pct">22%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="19"></div></div><span class="pct">19%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab">Visa <span class="pop-badge">Widest trade gap</span></div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="19"></div></div><span class="pct">19%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="8"></div></div><span class="pct">8%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab">Nike</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="16"></div></div><span class="pct">16%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="12"></div></div><span class="pct">12%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab">McDonald's</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="15"></div></div><span class="pct">15%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="11"></div></div><span class="pct">11%</span></div>
+      </div>
+      <div class="card-foot"><span class="small-base">Unprompted · Trade n=136 · Public n=200</span><span>Named without any brand list shown.</span></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker"><span class="num">6</span>How the brands reached them</div>
+    <h2 class="section-h">The merchant counter <u>did the work</u></h2>
+    <p class="lede">TV and stadium logos reach the trades much as they reach anyone. The channel that behaves differently is the one Wave 1 pointed at: in-store promotions and World Cup packaging landed with the trades at double the public's rate, and it climbed six points over the tournament while nothing else moved much. For a trade brand that's the finding to spend against.</p>
+    <div class="card reveal" style="margin-bottom:22px">
+      <div class="pair">
+        <div class="pair-lab">Noticed brands through in-store promos or World Cup packaging</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="29.4"></div></div><span class="pct">29%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="14.0"></div></div><span class="pct">14%</span></div>
+      </div>
+      <div class="card-foot"><span>Trade were 23% at Wave 1, public 17% — the trade figure is the one that grew.</span><span>Trade n=136 · Public n=200</span></div>
+    </div>
+    <div class="card reveal">
+      <div class="card-head"><div><span class="card-q">Trade only</span><h3>How the trade actually noticed brands during the tournament</h3></div></div>
+      <div class="bar-row"><div class="bar-lab">TV ads during match coverage <span class="pct">54%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="53.7"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">Brand logos at matches or stadiums <span class="pct">51%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="50.7"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">In-store or merchant promotions <span class="pct">29%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="29.4"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">On social media <span class="pct">26%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="25.7"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">Outdoor ads (billboards, posters) <span class="pct">21%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="20.6"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">Player or creator content <span class="pct">14%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="14.0"></div></div></div>
+      <div class="card-foot"><span class="small-base">Trade only · VOTT, n=136</span><span>Respondents could select more than one.</span></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker"><span class="num">7</span>Said versus did</div>
+    <h2 class="section-h">Intent ran <u>well ahead of action</u></h2>
+    <p class="lede">Here's the reckoning, and it's the most useful thing in this wave. In June, 60% of trades told us a discount would sway them and only 22% said nothing would shift them. In the event just 20% actually bought or moved, and 58% did nothing at all. The stated levers weren't wrong about <em>what</em> works, but they were badly wrong about <em>how many</em>. Take any Wave 1 intent number and expect roughly a third of it to convert.</p>
+    <div class="cards two" style="margin-bottom:22px">
+      <div class="card reveal scoreboard-card">
+        <div class="card-head"><div><span class="card-q">Trade · The lever</span><h3>A discount would sway me → actually bought or shifted</h3></div></div>
+        <div class="bigstat vs">
+          <div class="stat"><div class="v p">60%</div><div class="vlab">Said (W1)</div></div>
+          <div class="vs-sep">→</div>
+          <div class="stat"><div class="v t">20%</div><div class="vlab">Did (W2)</div></div>
+        </div>
+      </div>
+      <div class="card reveal scoreboard-card">
+        <div class="card-head"><div><span class="card-q">Trade · The refusal</span><h3>Nothing would change me → nothing did change me</h3></div></div>
+        <div class="bigstat vs">
+          <div class="stat"><div class="v p">22%</div><div class="vlab">Said (W1)</div></div>
+          <div class="vs-sep">→</div>
+          <div class="stat"><div class="v t">58%</div><div class="vlab">Did (W2)</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card reveal" style="margin-bottom:22px">
+      <div class="card-head"><div><span class="card-q">Behaviour</span><h3>What the tournament actually moved</h3></div></div>
+      <div class="pair">
+        <div class="pair-lab">Bought from, or feel more likely to buy from, a sponsor</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="19.9"></div></div><span class="pct">20%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="32.0"></div></div><span class="pct">32%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab">Noticed a brand more than they normally would</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="30.1"></div></div><span class="pct">30%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="27.5"></div></div><span class="pct">28%</span></div>
+      </div>
+      <div class="pair">
+        <div class="pair-lab">Nothing has changed their behaviour</div>
+        <div class="pair-row t"><span class="pname t">Trade</span><div class="bar-track"><div class="bar-fill" data-pct="58.1"></div></div><span class="pct">58%</span></div>
+        <div class="pair-row p"><span class="pname p">Public</span><div class="bar-track"><div class="bar-fill" data-pct="52.0"></div></div><span class="pct">52%</span></div>
+      </div>
+      <div class="card-foot"><span>Trade n=136 · Public n=200</span><span>The trades notice more, but shift less — the public are the ones who moved.</span></div>
+    </div>
+    <div class="card reveal">
+      <div class="card-head"><div><span class="card-q">Trade only</span><h3>When a sponsor does convert the trade, it's price-led</h3></div><span class="indicative">Low base · n=27</span></div>
+      <div class="bar-row"><div class="bar-lab">A discount or promo offer <span class="pct">52%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="51.9"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">A trade-counter or merchant promo <span class="pct">41%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="40.7"></div></div></div>
+      <div class="bar-row"><div class="bar-lab">A World Cup deal on tools or materials <span class="pct">26%</span></div><div class="bar-track"><div class="bar-fill t" data-pct="25.9"></div></div></div>
+      <div class="card-foot"><span class="small-base">Asked only of the 27 trades who bought or shifted — indicative</span><span>Trade brand heroes named unprompted: Screwfix · Toolstation · Dulux · Visa · Coca-Cola</span></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker"><span class="num">8</span>The trade opportunity</div>
+    <h2 class="section-h">Still <u>wide open</u></h2>
+    <p class="lede"><strong>Trade only.</strong> We asked tradespeople whether the trade brands and merchants they deal with had made the most of this World Cup. Fewer than three in ten said yes. That's a verdict on the whole category from the people it's aimed at, and after a tournament in which the one channel that demonstrably worked for them was the merchant counter, it reads less like a complaint and more like an instruction.</p>
+    <div class="card reveal">
+      <div class="bigstat" style="grid-template-columns:1fr">
+        <div class="stat"><div class="v t">29%</div><div class="vlab">Agree trade brands maximised the World Cup</div></div>
+      </div>
+      <div class="card-foot"><span class="small-base">Trade only · VOTT, n=136</span><span>Agree or strongly agree that trade brands and merchants fully maximised the opportunity.</span></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="kicker"><span class="num">9</span>So what</div>
+    <h2 class="section-h">Three calls for the <u>next tournament</u></h2>
+    <p class="lede">Wave 1 told us what these two crowds intended. Wave 2 tells us what that intent was actually worth, and the honest answer is: less than it looked, but not in the places you'd guess. Three things to carry into the next brief.</p>
+    <div class="cards">
+      <div class="card reveal accent">
+        <div class="card-head"><div><span class="card-q">Planning · 01</span><h3>Discount intent by three</h3></div><span class="indicative">60% → 20%</span></div>
+        <p class="lede" style="margin-bottom:0">Six in ten trades said a discount would sway them; two in ten actually moved. The lever was real, the volume wasn't. Stated-intent questions are fine for ranking what works, but price them at roughly a third when you size the prize, or you'll build a business case the tournament can't pay back.</p>
+      </div>
+      <div class="card reveal accent">
+        <div class="card-head"><div><span class="card-q">Channel · 02</span><h3>Buy the counter, not the bar</h3></div><span class="indicative">29% vs 17%</span></div>
+        <p class="lede" style="margin-bottom:0">Wave 1 said sponsor the room. The late kick-offs emptied it: only 17% of trades made it to a pub against the 29% who planned to, while 92% watched at home. The channel that did deliver was in-store, reaching the trade at double the public's rate and the only one that grew. Same instinct, different room.</p>
+      </div>
+      <div class="card reveal accent">
+        <div class="card-head"><div><span class="card-q">Audience · 03</span><h3>The public moved, the trade noticed</h3></div><span class="indicative">32% vs 20%</span></div>
+        <p class="lede" style="margin-bottom:0">Flip Wave 1 on its head. The trades noticed more brands and stayed up later, yet the public were the ones who actually bought, 32% against 20%. If a sponsor wants volume this tournament, that's the public. If they want the trade, attention was never the problem: converting it was, and it converts at the merchant counter or not at all.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="cta">
+      <p class="cta-text">Need to hear from verified tradespeople?</p>
+      <a class="btn btn-primary" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>UK FAN SURVEY · 2026 FIFA WORLD CUP · WAVE 2</span>
+    <span>TRADE (VOTT, n=136) vs PUBLIC (PANEL, n=200)</span>
+  </footer>
+
+  </div><!-- /wave-w2 -->
 
 </div>
 
 <script>
   (function(){
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Bars are drawn against a ceiling rather than 100% so small gaps stay legible.
+    // Default ceiling is 70; a card carrying data-scale overrides it (cards with
+    // values near or above 70 need a 100 ceiling or they all clamp to full width).
     function fillBars(scope){
       scope.querySelectorAll('.bar-fill[data-pct]').forEach(function(bar){
         var pct = parseFloat(bar.getAttribute('data-pct')) || 0;
-        bar.style.width = Math.min(100, (pct / 70) * 100) + '%';
+        var host = bar.closest('[data-scale]');
+        var scale = host ? (parseFloat(host.dataset.scale) || 70) : 70;
+        bar.style.width = Math.min(100, (pct / scale) * 100) + '%';
       });
     }
     var cards = document.querySelectorAll('.card.reveal');
@@ -328,6 +654,52 @@
       });
     }, { threshold: 0.2 });
     cards.forEach(function(c){ obs.observe(c); });
+  })();
+
+  // ---- Wave One / Wave Two switcher ----
+  (function(){
+    var tabs   = Array.prototype.slice.call(document.querySelectorAll('.wavetab'));
+    var panels = {};
+    document.querySelectorAll('.wave-panel').forEach(function(p){
+      panels[p.id.replace('wave-','')] = p;
+    });
+
+    function activate(wave, focus){
+      if(!panels[wave]) return;
+      tabs.forEach(function(t){
+        var on = t.dataset.wave === wave;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+        if(on && focus) t.focus();
+      });
+      Object.keys(panels).forEach(function(k){
+        panels[k].classList.toggle('active', k === wave);
+      });
+      if(history.replaceState) history.replaceState(null, '', '#' + wave);
+    }
+
+    // The panels are tall, so a wave switch should land you at the top of the new
+    // one. Same approach as compare.html: the page is an auto-sized iframe with no
+    // internal scroll, so scrolling our own window does nothing when embedded —
+    // scrollIntoView bubbles up and scrolls the host page instead.
+    function scrollToTop(){
+      var top = document.querySelector('.wavebar') || document.body;
+      window.scrollTo(0, 0);
+      if(top && top.scrollIntoView) top.scrollIntoView({ block:'start' });
+    }
+
+    tabs.forEach(function(t){
+      t.addEventListener('click', function(){ activate(t.dataset.wave); scrollToTop(); });
+    });
+
+    document.querySelector('.wavebar').addEventListener('keydown', function(e){
+      var i = tabs.findIndex(function(t){ return t.getAttribute('aria-selected') === 'true'; });
+      if(e.key === 'ArrowRight'){ e.preventDefault(); activate(tabs[(i+1)%tabs.length].dataset.wave, true); }
+      else if(e.key === 'ArrowLeft'){ e.preventDefault(); activate(tabs[(i-1+tabs.length)%tabs.length].dataset.wave, true); }
+    });
+
+    var start = (location.hash || '').replace('#','');
+    activate(panels[start] ? start : 'w1');
   })();
 </script>
 
