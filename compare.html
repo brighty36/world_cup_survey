@@ -141,6 +141,21 @@
 
   .footer-note{text-align:center;font-size:12px;color:var(--cream);opacity:.75;margin-top:10px;padding-top:18px;border-top:1px dashed var(--card-edge)}
   .restart-row{display:flex;justify-content:center;margin:28px 0 6px}
+
+  /* ---------- wave switcher (Wave One / Wave Two) ---------- */
+  .wavebar{display:flex;gap:6px;padding:16px 0 2px;flex-wrap:wrap;scroll-margin-top:74px}
+  .wavetab{
+    appearance:none;border:1px solid var(--card-edge);background:rgba(0,0,0,.18);
+    color:var(--chalk);cursor:pointer;border-radius:10px;padding:11px 22px;
+    display:flex;flex-direction:column;gap:3px;text-align:left;transition:all .15s;
+  }
+  .wavetab:hover{border-color:rgba(214,0,108,.55)}
+  .wavetab .w-title{font-weight:700;font-size:14.5px;letter-spacing:.01em}
+  .wavetab .w-sub{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--cream);opacity:.72;font-weight:600}
+  .wavetab[aria-selected="true"]{background:var(--magenta);border-color:var(--magenta);box-shadow:0 0 18px rgba(214,0,108,.35)}
+  .wavetab[aria-selected="true"] .w-title{color:#fff}
+  .wavetab[aria-selected="true"] .w-sub{color:#fff;opacity:.85}
+  .wavetab:focus-visible{outline:2px solid var(--cream);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -166,26 +181,28 @@
 
 <div class="wrap">
 
+  <div class="wavebar" role="tablist" aria-label="Survey wave">
+    <button class="wavetab" role="tab" id="wavetab-w1" aria-selected="true" aria-controls="quizArea" data-wave="w1" onclick="switchWave('w1')">
+      <span class="w-title">Wave One</span>
+      <span class="w-sub">Before kick-off · June</span>
+    </button>
+    <button class="wavetab" role="tab" id="wavetab-w2" aria-selected="false" aria-controls="quizArea" data-wave="w2" onclick="switchWave('w2')">
+      <span class="w-title">Wave Two</span>
+      <span class="w-sub">The verdict · July</span>
+    </button>
+  </div>
+
   <div class="quiz-wrap" style="padding-top:14px">
 
     <div class="topstatus">
-      <div class="sb-brand"><span class="dot"></span>World Cup Survey Wave 1 · Fielded 5–10 June 2026</div>
+      <div class="sb-brand"><span class="dot"></span><span id="sbBrandText">World Cup Survey Wave 1 · Fielded 5–10 June 2026</span></div>
       <div class="sb-clock" id="sbClock"><b>KICK-OFF</b></div>
     </div>
 
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
-    <!-- INTRO -->
-    <div class="hero" id="intro">
-      <h1 class="title">Where do you stand vs <em>the public &amp; the trade?</em></h1>
-      <p class="subhead">Answer <strong>13 quick questions</strong> about the 2026 FIFA World Cup — your excitement, viewing plans, brand attitudes and predictions. Then we'll reveal exactly how your answers stack up against both the UK general public and the trade audience surveyed for this study.</p>
-      <div class="kickoff-stat">
-        <div class="ks"><b>244</b><span>Public respondents</span></div>
-        <div class="ks"><b>116</b><span>Trade respondents</span></div>
-        <div class="ks"><b>13</b><span>Questions</span></div>
-      </div>
-      <button class="btn btn-primary" onclick="startQuiz()">Kick off →</button>
-    </div>
+    <!-- INTRO (populated by renderIntro per wave) -->
+    <div class="hero" id="intro"></div>
 
     <!-- QUESTIONS render here -->
     <div id="quizArea"></div>
@@ -700,10 +717,413 @@
 }
 </script>
 
-<script>
-const DATA = JSON.parse(document.getElementById('wc-data').textContent);
+<script id="wc-data-w2" type="application/json">
+{
+ "n_public": 200,
+ "n_trade": 136,
+ "q1": {
+  "labels": [
+   "Strongly agree",
+   "Agree",
+   "Neither agree nor disagree",
+   "Disagree",
+   "Strongly disagree",
+   "Haven't watched any of it"
+  ],
+  "pct": [
+   36.0,
+   34.0,
+   13.0,
+   1.5,
+   2.0,
+   13.5
+  ],
+  "trade": [
+   20.6,
+   50.0,
+   16.2,
+   2.9,
+   0.7,
+   9.6
+  ]
+ },
+ "q2": {
+  "labels": [
+   "Much better than expected",
+   "Slightly better than expected",
+   "About what I expected",
+   "Slightly worse than expected",
+   "Much worse than expected",
+   "No particular expectations"
+  ],
+  "pct": [
+   34.1,
+   28.9,
+   22.0,
+   7.5,
+   3.5,
+   4.0
+  ],
+  "trade": [
+   22.0,
+   26.8,
+   39.0,
+   10.6,
+   0.8,
+   0.8
+  ]
+ },
+ "q3": {
+  "labels": [
+   "All or almost all",
+   "More than half",
+   "A handful",
+   "Just one or two",
+   "None"
+  ],
+  "pct": [
+   15.0,
+   42.8,
+   31.2,
+   9.2,
+   1.7
+  ],
+  "trade": [
+   8.1,
+   42.3,
+   38.2,
+   8.1,
+   3.3
+  ]
+ },
+ "q4": {
+  "labels": [
+   "The opening match",
+   "Group matches – a team I support",
+   "Group matches – other teams",
+   "Round of 32",
+   "Round of 16",
+   "Quarter-finals",
+   "Semi-finals"
+  ],
+  "pct": [
+   51.2,
+   58.2,
+   44.7,
+   54.1,
+   57.6,
+   67.6,
+   41.2
+  ],
+  "trade": [
+   41.2,
+   84.0,
+   52.1,
+   63.9,
+   73.1,
+   84.0,
+   59.7
+  ]
+ },
+ "q5": {
+  "labels": [
+   "No late-night matches",
+   "Until around 10–11pm",
+   "Until around midnight",
+   "Until around 2am",
+   "Until around 3am or later"
+  ],
+  "pct": [
+   7.6,
+   17.1,
+   28.2,
+   22.4,
+   24.7
+  ],
+  "trade": [
+   5.0,
+   10.1,
+   27.7,
+   20.2,
+   37.0
+  ]
+ },
+ "q6": {
+  "labels": [
+   "At home on TV or streaming",
+   "At a friend or family member's home",
+   "In a pub or bar",
+   "At a fan zone or public screening"
+  ],
+  "pct": [
+   88.8,
+   18.8,
+   16.5,
+   1.2
+  ],
+  "trade": [
+   91.6,
+   12.6,
+   16.8,
+   0.0
+  ]
+ },
+ "q7": {
+  "labels": [
+   "Watched match highlights online",
+   "Followed World Cup content on social media",
+   "Entered a sweepstake or prediction competition",
+   "Watched matches in a pub, bar, or fan zone",
+   "Watched matches with friends or family",
+   "Bought food, drink or merch for a match",
+   "Workplace sweepstake or conversation",
+   "Bought a product because of a World Cup promo",
+   "Watched or listened to analysis outside live coverage",
+   "None of these"
+  ],
+  "pct": [
+   45.5,
+   31.0,
+   13.0,
+   15.0,
+   39.0,
+   22.5,
+   13.5,
+   9.5,
+   16.5,
+   21.0
+  ],
+  "trade": [
+   55.1,
+   33.1,
+   26.5,
+   21.3,
+   47.1,
+   29.4,
+   16.9,
+   9.6,
+   28.7,
+   14.7
+  ]
+ },
+ "q9": {
+  "labels": [
+   "Adverts during previews / coverage",
+   "Logos at matches or in stadiums",
+   "Social media",
+   "Players or creators featuring the brand",
+   "Remember from previous tournaments",
+   "In-store promotions or branded packaging",
+   "Outdoor advertising – billboards, posters",
+   "Word of mouth or things I've read",
+   "I don't associate any brands with the World Cup"
+  ],
+  "pct": [
+   46.0,
+   42.5,
+   18.5,
+   10.5,
+   9.0,
+   14.0,
+   11.5,
+   6.5,
+   22.5
+  ],
+  "trade": [
+   53.7,
+   50.7,
+   25.7,
+   14.0,
+   8.8,
+   29.4,
+   20.6,
+   2.2,
+   22.1
+  ]
+ },
+ "q10": {
+  "labels": [
+   "Noticed a brand more than I normally would",
+   "Searched for more about a brand online",
+   "Followed a brand on social media",
+   "Engaged with brand content – liked, shared, commented",
+   "Entered a promotion or competition",
+   "Talked about a sponsor with people I know",
+   "Chose a brand over a competitor",
+   "Bought from a brand for the first time",
+   "None of these"
+  ],
+  "pct": [
+   27.5,
+   8.0,
+   9.0,
+   10.5,
+   8.0,
+   9.5,
+   5.0,
+   2.0,
+   52.0
+  ],
+  "trade": [
+   30.1,
+   8.8,
+   5.1,
+   5.1,
+   12.5,
+   6.6,
+   5.9,
+   5.9,
+   58.1
+  ]
+ },
+ "q11": {
+  "labels": [
+   "Yes — already bought from a sponsor",
+   "Yes — feel more likely to buy",
+   "No — hasn't changed my purchasing",
+   "Don't know"
+  ],
+  "pct": [
+   15.5,
+   16.5,
+   59.0,
+   9.0
+  ],
+  "trade": [
+   11.8,
+   8.1,
+   74.3,
+   5.9
+  ]
+ },
+ "q15": {
+  "labels": [
+   "Yes",
+   "No",
+   "Not sure"
+  ],
+  "pct": [
+   78.8,
+   13.3,
+   7.9
+  ],
+  "trade": [
+   79.8,
+   16.8,
+   3.4
+  ]
+ },
+ "q16": {
+  "labels": [
+   "Preferred the BBC",
+   "Preferred ITV / STV",
+   "No preference",
+   "Haven't noticed / don't know"
+  ],
+  "pct": [
+   33.5,
+   20.8,
+   32.0,
+   13.7
+  ],
+  "trade": [
+   33.3,
+   17.4,
+   34.8,
+   14.4
+  ]
+ },
+ "q14_all": {
+  "Algeria": 0.5,
+  "Argentina": 3.0,
+  "Australia": 0.5,
+  "Belgium": 1.0,
+  "Bosnia and Herzegovina": 0.5,
+  "Brazil": 1.5,
+  "Cape Verde": 0.5,
+  "Colombia": 0.5,
+  "Egypt": 0.5,
+  "England": 62.0,
+  "France": 2.5,
+  "Netherlands": 0.5,
+  "Portugal": 2.0,
+  "Scotland": 4.5,
+  "South Africa": 0.5,
+  "South Korea": 0.5,
+  "Spain": 1.5,
+  "Not supporting a nation": 17.5
+ },
+ "q14_trade": {
+  "Argentina": 1.5,
+  "Australia": 0.7,
+  "Cape Verde": 0.7,
+  "England": 73.5,
+  "France": 0.7,
+  "Iran": 0.7,
+  "Portugal": 0.7,
+  "Scotland": 4.4,
+  "Spain": 3.7,
+  "Switzerland": 0.7,
+  "Not supporting a nation": 12.5
+ },
+ "countries": [
+  "Algeria",
+  "Argentina",
+  "Australia",
+  "Austria",
+  "Belgium",
+  "Bosnia and Herzegovina",
+  "Brazil",
+  "Canada (host)",
+  "Cape Verde",
+  "Colombia",
+  "Croatia",
+  "Curacao",
+  "Czechia",
+  "DR Congo",
+  "Ecuador",
+  "Egypt",
+  "England",
+  "France",
+  "Germany",
+  "Ghana",
+  "Haiti",
+  "Iran",
+  "Iraq",
+  "Ivory Coast",
+  "Japan",
+  "Jordan",
+  "Mexico (host)",
+  "Morocco",
+  "Netherlands",
+  "New Zealand",
+  "Norway",
+  "Panama",
+  "Paraguay",
+  "Portugal",
+  "Qatar",
+  "Saudi Arabia",
+  "Scotland",
+  "Senegal",
+  "South Africa",
+  "South Korea",
+  "Spain",
+  "Sweden",
+  "Switzerland",
+  "Tunisia",
+  "Turkey",
+  "United States (host)",
+  "Uruguay",
+  "Uzbekistan"
+ ]
+}
+</script>
 
-const QUESTIONS = [
+<script>
+const DATA_W1 = JSON.parse(document.getElementById('wc-data').textContent);
+const DATA_W2 = JSON.parse(document.getElementById('wc-data-w2').textContent);
+
+const QUESTIONS_W1 = [
   { key:'q1',  type:'single',       kicker:'Question 1 of 13',  title:'I am excited about the 2026 World Cup',                    sub:'How much do you agree with that statement?' },
   { key:'q2',  type:'single',       kicker:'Question 2 of 13',  title:'Compared to previous World Cups...',                       sub:'How does your excitement this time compare?' },
   { key:'q3',  type:'single',       kicker:'Question 3 of 13',  title:'How likely are you to watch any of the tournament?',       sub:'Pick the option closest to how you feel.' },
@@ -719,6 +1139,45 @@ const QUESTIONS = [
   { key:'q14', type:'single',       kicker:'Question 13 of 13', title:'How far will the nation you support get?',                sub:'Be honest — not just hopeful.' },
 ];
 
+// Wave 2 is a different questionnaire — actual behaviour, not intent. It keeps
+// the same 13-question shape but drops the open-text brand recall (Q8) and the
+// trade-only questions, which don't work as a public self-comparison.
+const QUESTIONS_W2 = [
+  { key:'q1',  type:'single', kicker:'Question 1 of 13',  title:'I have enjoyed the 2026 World Cup so far',            sub:'How much do you agree with that statement?' },
+  { key:'q2',  type:'single', kicker:'Question 2 of 13',  title:'Compared with what you expected...',                 sub:'How has the tournament been for you?' },
+  { key:'q3',  type:'single', kicker:'Question 3 of 13',  title:'Roughly how many matches have you watched?',         sub:'Your best estimate across the whole tournament.' },
+  { key:'q4',  type:'multi',  kicker:'Question 4 of 13',  title:'Which matches or stages have you watched?',          sub:'Select all that apply.' },
+  { key:'q5',  type:'single', kicker:'Question 5 of 13',  title:'What is the latest you have stayed up to watch?',    sub:'Pick the latest you made it for a match.' },
+  { key:'q6',  type:'multi',  kicker:'Question 6 of 13',  title:'Where have you watched the majority of matches?',    sub:'Select all that apply.' },
+  { key:'q7',  type:'multi',  kicker:'Question 7 of 13',  title:'What have you done as part of following the World Cup?', sub:'Select all that apply.' },
+  { key:'q9',  type:'multi',  kicker:'Question 8 of 13',  title:'How have you come across brands during the tournament?', sub:'Select all that apply.' },
+  { key:'q10', type:'multi',  kicker:'Question 9 of 13',  title:'What have you done because of a brand\'s involvement?', sub:'Select all that apply.' },
+  { key:'q11', type:'single', kicker:'Question 10 of 13', title:'Have you bought, or feel more likely to buy, from a sponsor?', sub:'Since the tournament began.' },
+  { key:'q14', type:'country', kicker:'Question 11 of 13', title:'Which nation have you been supporting?',            sub:'Search or pick your team.' },
+  { key:'q15', type:'single', kicker:'Question 12 of 13', title:'Have you been happy with their performance?',        sub:'The nation you\'ve been supporting.' },
+  { key:'q16', type:'single', kicker:'Question 13 of 13', title:'BBC or ITV / STV?',                                 sub:'Which have you preferred watching games on?' },
+];
+
+// Per-wave intro copy + status line. The active wave points DATA / QUESTIONS.
+const WAVES = {
+  w1: {
+    data: DATA_W1, questions: QUESTIONS_W1,
+    brand: 'World Cup Survey Wave 1 · Fielded 5–10 June 2026',
+    heroTitle: 'Where do you stand vs <em>the public &amp; the trade?</em>',
+    heroSub: 'Answer <strong>13 quick questions</strong> about the 2026 FIFA World Cup — your excitement, viewing plans, brand attitudes and predictions. Then we\'ll reveal exactly how your answers stack up against both the UK general public and the trade audience surveyed for this study.',
+  },
+  w2: {
+    data: DATA_W2, questions: QUESTIONS_W2,
+    brand: 'World Cup Survey Wave 2 · Fielded 14–16 July 2026',
+    heroTitle: 'How did <em>your World Cup</em> actually go?',
+    heroSub: 'The tournament\'s nearly done. Answer <strong>13 quick questions</strong> about what you really watched, who you backed and what you did about the brands — then see how your answers stack up against the UK public and the trade.',
+  },
+};
+
+let wave = 'w1';
+let DATA = WAVES.w1.data;
+let QUESTIONS = WAVES.w1.questions;
+
 let step = -1; // -1 = intro
 const answers = {};
 const revealed = {}; // multi questions: comparison shown only after "Confirm selections"
@@ -728,6 +1187,52 @@ function startQuiz(){
   document.getElementById('intro').style.display = 'none';
   step = 0;
   renderQuestion();
+}
+
+// Populate the intro screen for the active wave.
+function renderIntro(){
+  const w = WAVES[wave];
+  const n = QUESTIONS.length;
+  document.getElementById('sbBrandText').textContent = w.brand;
+  document.getElementById('intro').innerHTML = `
+    <h1 class="title">${w.heroTitle}</h1>
+    <p class="subhead">${w.heroSub}</p>
+    <div class="kickoff-stat">
+      <div class="ks"><b>${DATA.n_public}</b><span>Public respondents</span></div>
+      <div class="ks"><b>${DATA.n_trade}</b><span>Trade respondents</span></div>
+      <div class="ks"><b>${n}</b><span>Questions</span></div>
+    </div>
+    <button class="btn btn-primary" onclick="startQuiz()">Kick off →</button>`;
+}
+
+// Switch the active wave. The quiz is stateful, so a switch restarts it — with a
+// confirm first if the player is mid-quiz and would lose answers.
+function switchWave(target){
+  if(target === wave) return;
+  const midQuiz = step >= 0 && Object.keys(answers).length > 0;
+  if(midQuiz && !confirm('Switch waves and start over? Your current answers will be cleared.')) return;
+
+  wave = target;
+  DATA = WAVES[wave].data;
+  QUESTIONS = WAVES[wave].questions;
+
+  document.querySelectorAll('.wavetab').forEach(t=>{
+    const on = t.dataset.wave === wave;
+    t.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+
+  // reset quiz state
+  for(const k in answers) delete answers[k];
+  for(const k in revealed) delete revealed[k];
+  step = -1;
+  document.getElementById('quizArea').innerHTML = '';
+  const res = document.getElementById('results');
+  res.innerHTML = ''; res.classList.remove('active');
+  renderIntro();
+  document.getElementById('intro').style.display = '';
+  updateProgress();
+  scrollToTop();
+  if(history.replaceState) history.replaceState(null, '', '#' + wave);
 }
 
 function updateProgress(){
@@ -800,9 +1305,7 @@ function renderQuestion(){
   } else if(q.type === 'multi' && (answers[q.key]||[]).length > 0){
     compHtml = revealed[q.key] ? buildInlineComp(q.key, answers[q.key]) : confirmBtn(q.key);
   } else if(q.type === 'country' && answers[q.key]){
-    const pubLookup = q.key === 'q11' ? DATA.q11_all : DATA.q13_all;
-    const tradeLookup = q.key === 'q11' ? DATA.q11_trade : DATA.q13_trade;
-    compHtml = buildInlineCountryComp(pubLookup, tradeLookup, answers[q.key], 6);
+    compHtml = buildInlineCountryComp(DATA[q.key+'_all'], DATA[q.key+'_trade'], answers[q.key], 6);
   } else if(q.type === 'country-multi' && (answers[q.key]||[]).length > 0){
     compHtml = revealed[q.key]
       ? buildInlineCountryComp(DATA.q12_all, DATA.q12_trade, answers[q.key]||[], 8)
@@ -922,18 +1425,22 @@ function nextQuestion(){
     step = QUESTIONS.length;
     document.getElementById('quizArea').innerHTML = '';
     updateProgress();
-    showResults();
+    if(wave === 'w2') showResultsW2(); else showResults();
     scrollToTop();
   }
 }
 
 function fmtPct(v){ return v.toFixed(1) + '%'; }
 
-const CMP_LEGEND = `<div class="cmp-legend">`+
-  `<span class="cl you"><i>★</i>Your pick</span>`+
-  `<span class="cl pub"><i></i>Public · n=${DATA.n_public}</span>`+
-  `<span class="cl trd"><i></i>Trade · n=${DATA.n_trade}</span>`+
-  `</div>`;
+// A function, not a constant: the sample sizes differ by wave, and DATA is
+// repointed when the wave switches, so the legend must be built at render time.
+function cmpLegend(){
+  return `<div class="cmp-legend">`+
+    `<span class="cl you"><i>★</i>Your pick</span>`+
+    `<span class="cl pub"><i></i>Public · n=${DATA.n_public}</span>`+
+    `<span class="cl trd"><i></i>Trade · n=${DATA.n_trade}</span>`+
+    `</div>`;
+}
 
 // "public's top" / "trade's top" badges for the most-popular answer in each audience.
 function topBadges(isPubTop, isTradeTop){
@@ -971,7 +1478,7 @@ function buildInlineComp(qkey, userIndices){
   });
   return `<div class="inline-comp">
     <div class="ic-eyebrow">You vs the public vs the trade</div>
-    ${CMP_LEGEND}
+    ${cmpLegend()}
     ${rows}
   </div>`;
 }
@@ -995,7 +1502,7 @@ function buildInlineCountryComp(pubLookup, tradeLookup, userPicks, topN){
   });
   return `<div class="inline-comp">
     <div class="ic-eyebrow">You vs the public vs the trade</div>
-    ${CMP_LEGEND}
+    ${cmpLegend()}
     ${rows}
   </div>`;
 }
@@ -1014,7 +1521,7 @@ function buildBarBlock(qkey, title, note, userIndices){
   return `<div class="res-block">
       <h3 class="res-q">${title}</h3>
       <p class="res-q-note">${note}</p>
-      ${CMP_LEGEND}
+      ${cmpLegend()}
       ${matchNote}
       ${rows}
     </div>`;
@@ -1043,7 +1550,7 @@ function buildCountryBlock(pubLookup, tradeLookup, title, note, userPicks, topN)
   return `<div class="res-block">
       <h3 class="res-q">${title}</h3>
       <p class="res-q-note">${note}</p>
-      ${CMP_LEGEND}
+      ${cmpLegend()}
       ${matchNote}
       ${rows}
     </div>`;
@@ -1373,6 +1880,90 @@ function showResults(){
     }, 60);
   });
 }
+
+// Wave 2 results: generic, no persona. Each question renders a you-vs-public-vs
+// -trade block, driven straight off QUESTIONS_W2 so it stays in step with the quiz.
+const W2_RESULT_META = {
+  q1:  ['Enjoyment of the tournament', 'Agreement that you\'ve enjoyed it — your pick marked with ★.'],
+  q2:  ['The tournament vs expectations', 'How it compared with what you expected.'],
+  q3:  ['How many matches you watched', 'Self-reported across the whole tournament.'],
+  q4:  ['Matches and stages watched', 'Multiple selections allowed — % who picked each. Asked of those who watched.'],
+  q5:  ['Latest you stayed up to watch', 'The latest kick-off you made it for.'],
+  q6:  ['Where you watched', 'Multiple selections allowed — asked of those who watched.'],
+  q7:  ['What you did around the tournament', 'Multiple selections allowed — % who picked each.'],
+  q9:  ['How you came across brands', 'Multiple selections allowed — % who picked each.'],
+  q10: ['What you did because of a brand', 'Multiple selections allowed — % who picked each.'],
+  q11: ['Bought from, or more likely to buy from, a sponsor', 'Whether the tournament shifted your buying.'],
+  q15: ['Happy with your team\'s performance', 'Asked of those supporting a nation.'],
+  q16: ['BBC or ITV / STV', 'Which broadcaster you preferred.'],
+};
+
+function showResultsW2(){
+  const r = document.getElementById('results');
+  let html = `
+    <div class="res-header">
+      <div class="eyebrow">Full time</div>
+      <h2 class="res-title">Your <em>Comparison</em></h2>
+      <p class="lede" style="margin-bottom:0;">Here's how your answers stack up against <strong>${DATA.n_public} UK general public</strong> respondents and <strong>${DATA.n_trade} trade</strong> respondents, surveyed in the closing days of the 2026 World Cup.</p>
+    </div>
+    <div class="cta">
+      <p class="cta-text">Want to know what the trade think?</p>
+      <a class="btn btn-primary" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span class="arr" aria-hidden="true">→</span></a>
+    </div>`;
+
+  QUESTIONS.forEach(q=>{
+    const meta = W2_RESULT_META[q.key] || [q.title, ''];
+    if(q.type === 'country'){
+      html += buildCountryBlock(DATA[q.key+'_all'], DATA[q.key+'_trade'], meta[0], meta[1], answers[q.key], 8);
+    } else if(q.type === 'multi'){
+      html += buildBarBlock(q.key, meta[0], meta[1], answers[q.key] || []);
+    } else {
+      html += buildBarBlock(q.key, meta[0], meta[1], answers[q.key] !== undefined ? [answers[q.key]] : []);
+    }
+  });
+
+  html += `
+    <div class="cta">
+      <p class="cta-text">Want to know what the trade think?</p>
+      <a class="btn btn-primary" href="mailto:info@voiceofthetrade.co.uk">Get in touch <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+    <div class="restart-row"><button class="btn btn-ghost" onclick="restartQuiz()">↺ Start over</button></div>
+    <div class="footer-note">Public sample n=${DATA.n_public} (UK general public) · Trade sample n=${DATA.n_trade} (Voice of the Trade). Fielded 14–16 July 2026. Your pick marked with ★.</div>`;
+
+  r.innerHTML = html;
+  r.classList.add('active');
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{
+      document.querySelectorAll('.cmp-fill').forEach(el=>{ el.style.width = el.dataset.w + '%'; });
+    }, 60);
+  });
+}
+
+// Restart the current wave from its intro (used by the W2 results; W1 uses reload).
+function restartQuiz(){
+  for(const k in answers) delete answers[k];
+  for(const k in revealed) delete revealed[k];
+  step = -1;
+  document.getElementById('quizArea').innerHTML = '';
+  const res = document.getElementById('results');
+  res.innerHTML = ''; res.classList.remove('active');
+  renderIntro();
+  document.getElementById('intro').style.display = '';
+  updateProgress();
+  scrollToTop();
+}
+
+// Deep-link (#w2) support + initial intro render.
+(function(){
+  const start = (location.hash || '').replace('#','');
+  if(start === 'w2'){
+    wave = 'w2'; DATA = WAVES.w2.data; QUESTIONS = WAVES.w2.questions;
+    document.querySelectorAll('.wavetab').forEach(t=>{
+      t.setAttribute('aria-selected', t.dataset.wave === 'w2' ? 'true' : 'false');
+    });
+  }
+  renderIntro();
+})();
 
 updateProgress();
 </script>
