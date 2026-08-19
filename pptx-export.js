@@ -17,6 +17,12 @@
 (function () {
   'use strict';
 
+  // PREVIEW ONLY. This is off on the live site and adds nothing to the page
+  // unless ?export=1 is present. index.html forwards the flag from the shell
+  // URL to this iframe, so https://brighty36.github.io/world_cup_survey/?export=1
+  // turns it on; opening explore.html?export=1 directly works too.
+  if (!/(?:^|&)export=1(?:&|$)/.test(location.search.slice(1))) return;
+
   var LIB = 'libs/pptxgen.bundle.js';
 
   // Site tokens, flattened to the solid fills a PowerPoint series can hold.
