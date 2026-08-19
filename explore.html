@@ -338,6 +338,35 @@ footer.foot{padding:30px 0 50px;border-top:1px solid var(--card-edge);font-size:
 .cta .btn .arr{transition:transform .15s}
 .cta .btn:hover{background:var(--magenta-deep);border-color:var(--magenta-deep);color:#fff}
 .cta .btn:hover .arr{transform:translateX(3px)}
+
+/* ---------- PowerPoint export: per-card picker + inline export controls ---------- */
+/* Repeated inline rather than floated: the shell sizes this page's iframe to its
+   full content height and never scrolls it, so position:fixed/sticky pins to the
+   bottom of the whole document, not to the visible area. */
+.card-pick{
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none;
+  border:1px solid var(--card-edge);background:rgba(0,0,0,.15);color:var(--chalk-soft);
+  padding:5px 10px;border-radius:999px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;
+}
+.card-pick:hover{border-color:var(--magenta);color:#fff}
+.card-pick input{accent-color:var(--magenta);width:13px;height:13px;margin:0;cursor:pointer}
+.card-pick:has(input:checked){background:var(--magenta);border-color:var(--magenta);color:#fff}
+
+.pptx-pack{display:none;align-items:center;gap:6px;flex-wrap:wrap}
+.pptx-pack.on{display:inline-flex}
+.pptx-pack button{
+  cursor:pointer;font-family:inherit;font-weight:600;border-radius:999px;
+  font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding:5px 11px;
+}
+.pptx-pack.compact button{font-size:10px;padding:5px 9px}
+.pptx-go{background:var(--magenta);border:1px solid var(--magenta);color:#fff;box-shadow:0 0 14px rgba(214,0,108,.35)}
+.pptx-go:hover:not(:disabled){background:var(--magenta-deep);border-color:var(--magenta-deep)}
+.pptx-go .pptx-n{display:inline-block;min-width:1.1em;text-align:center;background:rgba(0,0,0,.28);border-radius:999px;padding:0 5px;margin-left:2px}
+.pptx-clear{background:none;border:1px solid var(--card-edge);color:var(--chalk-soft)}
+.pptx-clear:hover:not(:disabled){border-color:var(--magenta);color:#fff}
+.pptx-pack button:disabled{opacity:.6;cursor:default;box-shadow:none}
+.pptx-msg{font-size:11px;color:var(--cream);opacity:.85;max-width:32ch;text-transform:none;letter-spacing:0}
+.jumpbox .pptx-pack{margin-left:10px;order:3}
 </style>
 </head>
 <body>
@@ -40421,6 +40450,7 @@ window.addEventListener('scroll', ()=>{
 if(!document.querySelector('.wave-panel')) renderAll();
 </script>
 
+<script src="pptx-export.js"></script>
 <script src="embed-child.js"></script>
 </body>
 </html>
