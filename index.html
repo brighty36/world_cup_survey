@@ -158,6 +158,18 @@ body{
     }
   });
 
+  // Preview flag. The PowerPoint export is off on the live site and turns on
+  // only for ?export=1 on this shell, which is then forwarded to each tab's
+  // iframe. The tab links below use a bare '#name', which keeps the query
+  // string, so the flag survives switching tabs.
+  var PREVIEW = /(?:^|&)export=1(?:&|$)/.test(location.search.slice(1));
+
+  function srcFor(panel){
+    var src = panel.dataset.src;
+    if(!PREVIEW) return src;
+    return src + (src.indexOf('?') < 0 ? '?' : '&') + 'export=1';
+  }
+
   // Lazy-load each iframe the first time its tab is opened.
   function ensureLoaded(panel){
     if(panel.dataset.loaded) return;
@@ -171,7 +183,7 @@ body{
     f.loading = 'eager';
     f.scrolling = 'no'; // the iframe is sized to its content, so no inner scroll
     f.addEventListener('load', function(){ loader.remove(); });
-    f.src = panel.dataset.src;
+    f.src = srcFor(panel);
     panel.appendChild(f);
   }
 

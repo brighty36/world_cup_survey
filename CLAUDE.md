@@ -33,7 +33,7 @@ explore.html      1.4 MB. Every question, break-by-demographic. Data inline as J
 compare.html      "compare yourself" quiz. Data inline in <script type="application/json">.
 brand.css         shared design system, used by insights.html and compare.html ONLY
 embed-child.js    height reporting + in-app nav, loaded by all three tab pages
-pptx-export.js    PowerPoint export, loaded by explore.html ONLY
+pptx-export.js    PowerPoint export (PREVIEW, ?export=1 only), loaded by explore.html ONLY
 libs/             vendored pptxgen.bundle.js (MIT), fetched on demand by the export
 fonts/            licensed Rework Text woff/woff2 (the .otf trial files are gitignored)
 05 Web Report/_build/   python data pipeline (gitignored, internal)
@@ -95,9 +95,17 @@ tracked and deployed, but it is the superseded single-page version.
 Anything hard-coded in `insights.html` copy must be re-checked against the JSON when the
 data changes. Nothing recomputes it.
 
-## PowerPoint export
+## PowerPoint export (preview only)
 
-`pptx-export.js` adds a tick box to every Explore card and an Export button that writes the
+**Off on the live site.** `pptx-export.js` returns immediately unless `?export=1` is in its
+own query string, so the deployed Pages site shows no tick boxes and no Export button.
+`index.html` reads the flag off the shell URL and forwards it to each tab iframe, so
+`https://brighty36.github.io/world_cup_survey/?export=1` turns it on, and
+`explore.html?export=1` works standalone. The tab links use a bare `#name`, which preserves
+the query string, so the flag survives switching tabs. This is hidden, not
+access-controlled: anyone who knows the flag can use it.
+
+When enabled it adds a tick box to every Explore card and an Export button that writes the
 selected charts to a `.pptx`, one native editable chart per slide, honouring each card's
 own Audience and Break-by selection.
 
