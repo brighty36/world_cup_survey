@@ -13,6 +13,15 @@
 
    Never read style.width or getComputedStyle here: bar widths animate over
    0.9s and are 0 for the first frame. `data-w` is the real number.
+
+   libs/pptxgen.bundle.js is hand-patched: PptxGenJS 4.0.1's chart writer bakes
+   a stray apostrophe into the embedded worksheet's <table ref="..."> attribute
+   (createExcelWorksheet in src/gen-charts.ts), which PowerPoint tolerates but
+   Keynote's stricter XML parser rejects, so exported charts fail to open
+   correctly on Mac. Fixed upstream in gitbrent/PptxGenJS PR #1327 (still
+   unmerged as of 4.0.1), so the one-character removal is applied by hand here.
+   Re-vendoring the bundle from a fresh build will reintroduce the bug unless
+   #1327 has landed upstream by then.
    --------------------------------------------------------------------------- */
 (function () {
   'use strict';
